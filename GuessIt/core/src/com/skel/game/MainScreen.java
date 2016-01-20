@@ -4,6 +4,8 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.scenes.scene2d.InputEvent;
+import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -23,10 +25,20 @@ public class MainScreen extends ApplicationAdapter {
 		Gdx.input.setInputProcessor(stage);
 		//Setting up Basic Skin (default skin)
 		skin = Utils.createBasicSkin();
-		//Create button
-		TextButton Button = new TextButton("New game",skin);
-		Button.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-		stage.addActor(Button);
+		//Create button login
+		TextButton newGameButton = new TextButton("Login",skin);
+		newGameButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+		newGameButton.addListener(new InputListener(){
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				System.out.println("HOLA");
+				return true;
+			}
+		});
+		stage.addActor(newGameButton);
+		//Create button credits
+		TextButton aboutButton = new TextButton("Credits",skin);
+		aboutButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.4f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+		stage.addActor(aboutButton);
 		//Create label
 		Label lab = new Label("GuessIt! Language Trainer",skin.get("default", Label.LabelStyle.class)); //Tomar como ejemplo para seleccionar skins diferentes.
 		lab.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.8f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
