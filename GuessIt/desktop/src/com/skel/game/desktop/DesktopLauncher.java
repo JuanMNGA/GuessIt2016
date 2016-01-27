@@ -2,6 +2,7 @@ package com.skel.game.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
+import com.skel.game.MainGame;
 import com.skel.game.MainScreen;
 
 public class DesktopLauncher {
@@ -10,6 +11,6 @@ public class DesktopLauncher {
 		config.title = "GuessIt: Language Trainer";
 		config.height = 500;
 		config.width = 320;
-		new LwjglApplication(new MainScreen(), config);
+		new LwjglApplication(new MainGame(), config);
 	}
 }

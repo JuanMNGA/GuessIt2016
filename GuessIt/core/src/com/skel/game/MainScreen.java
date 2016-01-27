@@ -1,7 +1,8 @@
 package com.skel.game;
 
-import com.badlogic.gdx.ApplicationAdapter;
+import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -14,12 +15,22 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Utils;
 
-public class MainScreen extends ApplicationAdapter {
+public class MainScreen implements Screen {
 	Skin skin;
 	BitmapFont font, font_label;
 	Stage stage;
-	
-	@Override
+
+	Game g;
+
+	public MainScreen(Game g){
+		create();
+		this.g = g;
+	}
+
+	public MainScreen(){
+		create();
+	}
+
 	public void create () {
 		stage = new Stage(new StretchViewport(320,500));
 		Gdx.input.setInputProcessor(stage);
@@ -31,6 +42,7 @@ public class MainScreen extends ApplicationAdapter {
 		newGameButton.addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				System.out.println("HOLA");
+				g.setScreen(new LoginScreen());
 				return true;
 			}
 		});
@@ -48,14 +60,39 @@ public class MainScreen extends ApplicationAdapter {
 	}
 
 	@Override
-	public void render () {
+	public void render (float delta) {
 		Gdx.gl.glClearColor(1, 1, 0.8f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		stage.act();
 		stage.draw();
 	}
 
+	@Override
+	public void show() {
+
+	}
+
 	public void resize(int width, int height){
 		stage.getViewport().update(width, height, false);
+	}
+
+	@Override
+	public void pause() {
+
+	}
+
+	@Override
+	public void resume() {
+
+	}
+
+	@Override
+	public void hide() {
+
+	}
+
+	@Override
+	public void dispose() {
+
 	}
 }
