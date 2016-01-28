@@ -22,6 +22,12 @@ public class MainScreen implements Screen {
 
 	Game g;
 
+	//Items del screen
+	TextButton newGameButton;
+	TextButton aboutButton;
+	TextButton registerButton;
+	Label lab;
+
 	public MainScreen(Game g){
 		create();
 		this.g = g;
@@ -31,32 +37,56 @@ public class MainScreen implements Screen {
 		create();
 	}
 
+	public void createStageActors(){
+		//Create button login
+		newGameButton = new TextButton("Login",skin);
+		aboutButton = new TextButton("Credits",skin);
+		registerButton = new TextButton("Register",skin);
+		lab = new Label("GuessIt! Language Trainer",skin.get("default", Label.LabelStyle.class)); //Tomar como ejemplo para seleccionar skins diferentes.
+
+		// Posicionamiento
+		newGameButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+
+		registerButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.4f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+
+		aboutButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.3f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+
+		lab.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.8f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+
+		//Activar caracteristicas
+		lab.setWrap(true);
+		lab.setAlignment(Align.center);
+
+		// Funciones callback
+
+		newGameButton.addListener(new InputListener(){
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				g.setScreen(new LoginScreen(g));
+				return true;
+			}
+		});
+
+		registerButton.addListener(new InputListener(){
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				g.setScreen(new RegisterScreen(g));
+				return true;
+			}
+		});
+
+		// Anadir al stage
+		stage.addActor(aboutButton);
+		stage.addActor(newGameButton);
+		stage.addActor(registerButton);
+		stage.addActor(lab);
+	}
+
 	public void create () {
 		stage = new Stage(new StretchViewport(320,500));
 		Gdx.input.setInputProcessor(stage);
 		//Setting up Basic Skin (default skin)
 		skin = Utils.createBasicSkin();
-		//Create button login
-		TextButton newGameButton = new TextButton("Login",skin);
-		newGameButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-		newGameButton.addListener(new InputListener(){
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				System.out.println("HOLA");
-				g.setScreen(new LoginScreen());
-				return true;
-			}
-		});
-		stage.addActor(newGameButton);
-		//Create button credits
-		TextButton aboutButton = new TextButton("Credits",skin);
-		aboutButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.4f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-		stage.addActor(aboutButton);
-		//Create label
-		Label lab = new Label("GuessIt! Language Trainer",skin.get("default", Label.LabelStyle.class)); //Tomar como ejemplo para seleccionar skins diferentes.
-		lab.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.8f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-		lab.setWrap(true);
-		lab.setAlignment(Align.center);
-		stage.addActor(lab);
+
+		createStageActors();
 	}
 
 	@Override

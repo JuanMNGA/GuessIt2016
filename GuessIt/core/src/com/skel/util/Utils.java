@@ -9,6 +9,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
@@ -50,7 +51,12 @@ public class Utils {
         lStyle.fontColor = Color.BLACK;
         tmpSkin.add("default",lStyle);
         //TextArea Style
-
+        TextField.TextFieldStyle tfStyle = new TextField.TextFieldStyle();
+        tfStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_text_area"));
+        tfStyle.font = tmpSkin.getFont("default");
+        tfStyle.fontColor = Color.WHITE;
+        tmpSkin.add("default",tfStyle);
+        //
         return tmpSkin;
     }
 }
