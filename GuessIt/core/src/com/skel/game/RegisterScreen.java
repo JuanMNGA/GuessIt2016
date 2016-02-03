@@ -7,10 +7,7 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.net.Connection;
@@ -26,9 +23,12 @@ public class RegisterScreen implements Screen {
     Connection con;
 
     //Items de la pantalla
-    Label labelLogin,labelPass;
-    TextField userLogin, userPass;
+    Label labelLogin,labelPass,labelName,labelLastname,labelEmail;
+    TextField userLogin, userPass, userName, userLastname, userEmail;
     TextButton LoginButton;
+
+    //Container
+    Table scroll_contenedor;
 
     Game g;
 
@@ -48,6 +48,13 @@ public class RegisterScreen implements Screen {
         userLogin = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
         labelPass = new Label("Password",skin.get("default", Label.LabelStyle.class));
         userPass = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
+        labelName = new Label("Name", skin.get("default", Label.LabelStyle.class));
+        labelLastname = new Label("Last name", skin.get("default", Label.LabelStyle.class));
+        labelEmail = new Label("Email", skin.get("default", Label.LabelStyle.class));
+        userName = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
+        userLastname = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
+        userEmail = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
+
         LoginButton = new TextButton("Register",skin);
 
         //Activar caracteristicas de los actores
@@ -56,6 +63,12 @@ public class RegisterScreen implements Screen {
         labelLogin.setAlignment(Align.center);
 
         labelPass.setAlignment(Align.center);
+
+        labelEmail.setAlignment(Align.center);
+
+        labelLastname.setAlignment(Align.center);
+
+        labelName.setAlignment(Align.center);
 
         //Text Fields
         userLogin.setAlignment(Align.center);
@@ -66,16 +79,14 @@ public class RegisterScreen implements Screen {
         userPass.setAlignment(Align.center);
         userPass.setPasswordCharacter('*');
 
-        //Alineacion en la escena
-        labelLogin.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.6f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+        userName.setAlignment(Align.center);
+        userName.setMessageText("Name");
 
-        userLogin.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+        userLastname.setAlignment(Align.center);
+        userLastname.setMessageText("Last name");
 
-        labelPass.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.4f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-
-        userPass.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.3f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-
-        LoginButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.1f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+        userEmail.setAlignment(Align.center);
+        userEmail.setMessageText("Email");
 
         //Funciones callback
         LoginButton.addListener(
@@ -92,12 +103,63 @@ public class RegisterScreen implements Screen {
                 }
         );
 
-        //Anadimos actores al stage
-        stage.addActor(labelLogin);
-        stage.addActor(userLogin);
-        stage.addActor(labelPass);
-        stage.addActor(userPass);
-        stage.addActor(LoginButton);
+        //Creamos la tabla contenedora de nuestra interfaz de registro
+        //Se pueden "encadenar" funciones para el control del tamaño, la posicion nos la da la propia tabla
+
+        scroll_contenedor = new Table();
+
+        scroll_contenedor.add(labelName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(userName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(labelLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(userLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(labelEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(userEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(labelLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row(); // Creamos una nueva fila
+
+        scroll_contenedor.add(userLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(labelPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(userPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(LoginButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        ScrollPane scroller = new ScrollPane(scroll_contenedor);
+
+        // Esta tabla es contenedora del scroll pane, importante para visualizar los contenidos y centrar la interfaz
+
+        final Table table = new Table();
+        table.setFillParent(true);
+        table.add(scroller).fill().expand();
+
+        //Anadimos la tabla al stage
+        stage.addActor(table);
     }
 
     @Override
