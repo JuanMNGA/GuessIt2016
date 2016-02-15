@@ -92,7 +92,13 @@ public class RegisterScreen implements Screen {
         LoginButton.addListener(
                 new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                        con.createUser(userLogin.getText(),userPass.getText());
+                        String[] info = new String[5];
+                        info[0] = userName.getText();
+                        info[1] = userLastname.getText();
+                        info[2] = userEmail.getText();
+                        info[3] = userLogin.getText();
+                        info[4] = userPass.getText();
+                        con.createUser(info);
                         if(con.getCreated()){
                             g.setScreen(new MainScreen(g));
                         }else{

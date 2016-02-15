@@ -9,7 +9,10 @@ import com.badlogic.gdx.Net.HttpRequest;
 import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.net.HttpParametersUtils;
+import com.badlogic.gdx.utils.TimeUtils;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 
 public class Connection implements HttpResponseListener{
@@ -18,6 +21,8 @@ public class Connection implements HttpResponseListener{
     String httpMethod = Net.HttpMethods.POST;
     String solicitud_variables = null;
     HttpRequest httpsolicitud;
+
+    SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     boolean validatedUser = false;
     boolean createdUser = false;
@@ -69,10 +74,14 @@ public class Connection implements HttpResponseListener{
         return createdUser;
     }
 
-    public boolean createUser(String username, String password){
+    public boolean createUser(String[] info){
         HashMap<String, String> parameters = new HashMap<String, String>();
-        parameters.put("usuario",username);
-        parameters.put("password",password);
+        parameters.put("nombre", info[0]);
+        parameters.put("apellidos", info[1]);
+        parameters.put("email", info[2]);
+        parameters.put("usuario",info[3]);
+        parameters.put("password",info[4]);
+        parameters.put("alta",dFormat.format(new Date(TimeUtils.millis())));
         url = "http://localhost/prueba/register.php?";
         //solicitud_variables = "&nombre=suscribete&puntaje=222";
         httpsolicitud = new HttpRequest(httpMethod);
@@ -83,6 +92,7 @@ public class Connection implements HttpResponseListener{
             public void handleHttpResponse(HttpResponse httpResponse) {
                 String A = httpResponse.getResultAsString();
                 Gdx.app.log("conexion",A);
+                Gdx.app.log("time", dFormat.format(new Date(TimeUtils.millis()).toString()));
             }
 
             @Override
