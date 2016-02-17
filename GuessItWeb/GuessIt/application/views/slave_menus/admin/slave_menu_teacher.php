@@ -1,0 +1,7 @@
+<div class="col-md-1">
+	<ul class="nav nav-pills nav-stacked">
+		<li role="presentation"><a href="#"> Add </a></li>
+		<li role="presentation"><a href="#"> Modify </a></li>
+		<li role="presentation"><a href="<?php echo base_url('index.php/Main/show_teacher_validate_admin')?>"> Validate </a></li>
+	</ul>
+</div>
