@@ -2,25 +2,30 @@ package com.skel.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.skel.net.Connection;
 import com.skel.util.Utils;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
 
 /**
  * Created by juanm on 28/01/2016.
  */
-public class RegisterScreen implements Screen {
+public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
     Stage stage;
     Skin skin;
-    Connection con;
 
     //Items de la pantalla
     Label labelLogin,labelPass,labelName,labelLastname,labelEmail;
@@ -32,13 +37,17 @@ public class RegisterScreen implements Screen {
 
     Game g;
 
+    //Utiles net
+    SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    Net.HttpRequest httpsolicitud;
+    String httpMethod = Net.HttpMethods.POST;
+
     public RegisterScreen(Game g){
         skin = Utils.createBasicSkin();
-        stage = new Stage(new StretchViewport(320,500));
+        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
 
         createStageActors();
-        con = new Connection();
         this.g = g;
     }
 
@@ -92,18 +101,20 @@ public class RegisterScreen implements Screen {
         LoginButton.addListener(
                 new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                        String[] info = new String[5];
-                        info[0] = userName.getText();
-                        info[1] = userLastname.getText();
-                        info[2] = userEmail.getText();
-                        info[3] = userLogin.getText();
-                        info[4] = userPass.getText();
-                        con.createUser(info);
-                        if(con.getCreated()){
-                            g.setScreen(new MainScreen(g));
-                        }else{
-                            g.setScreen(new MainScreen(g));
-                        }
+                        HashMap<String, String> parameters = new HashMap<String, String>();
+                        parameters.put("nombre", userName.getText());
+                        parameters.put("apellidos", userLastname.getText());
+                        parameters.put("email", userEmail.getText());
+                        parameters.put("usuario",userLogin.getText());
+                        parameters.put("password",userPass.getText());
+                        parameters.put("alta",dFormat.format(new Date(TimeUtils.millis())));
+                        String url = "http://localhost/prueba/register.php?";
+                        //solicitud_variables = "&nombre=suscribete&puntaje=222";
+                        httpsolicitud = new Net.HttpRequest(httpMethod);
+                        httpsolicitud.setUrl(url);
+                        httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+                        Gdx.net.sendHttpRequest(httpsolicitud, RegisterScreen.this);
+
                         return true;
                     }
                 }
@@ -203,6 +214,32 @@ public class RegisterScreen implements Screen {
 
     @Override
     public void dispose() {
+
+    }
+
+    @Override
+    public void handleHttpResponse(Net.HttpResponse httpResponse) {
+        final String Response = httpResponse.getResultAsString();
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(Response.isEmpty()){
+                    Gdx.app.log("conexion","fallida");
+                }else{
+                    Gdx.app.log("conexion",Response);
+                    Gdx.app.log("time", dFormat.format(new Date(TimeUtils.millis()).toString()));
+                }
+            }
+        });
+    }
+
+    @Override
+    public void failed(Throwable t) {
+
+    }
+
+    @Override
+    public void cancelled() {
 
     }
 }

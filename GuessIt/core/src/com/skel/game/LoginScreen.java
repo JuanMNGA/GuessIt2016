@@ -2,8 +2,10 @@ package com.skel.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
@@ -13,17 +15,18 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
-import com.skel.net.Connection;
+import com.skel.util.UserInfo;
 import com.skel.util.Utils;
+
+import java.util.HashMap;
 
 /**
  * Created by juanm on 27/01/2016.
  */
-public class LoginScreen implements Screen {
+public class LoginScreen implements Screen, Net.HttpResponseListener {
 
     Stage stage;
     Skin skin;
-    Connection con;
 
     //Items de la pantalla
     Label labelLogin,labelPass;
@@ -32,13 +35,17 @@ public class LoginScreen implements Screen {
 
     Game g;
 
+    UserInfo UInfo = new UserInfo();
+
+    Net.HttpRequest httpsolicitud;
+    String httpMethod = Net.HttpMethods.POST;
+
     public LoginScreen(Game g){
         skin = Utils.createBasicSkin();
-        stage = new Stage(new StretchViewport(320,500));
+        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
 
         createStageActors();
-        con = new Connection();
         this.g = g;
     }
 
@@ -81,12 +88,17 @@ public class LoginScreen implements Screen {
         LoginButton.addListener(
                 new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                        con.validateUser(userLogin.getText(),userPass.getText());
-                        if(con.getValidated()){
-                            g.setScreen(new MainScreen(g));
-                        }else{
-                            g.setScreen(new MainScreen(g));
-                        }
+                        // Conexion http
+                        HashMap<String, String> parameters = new HashMap<String, String>();
+                        parameters.put("usuario",userLogin.getText());
+                        parameters.put("password",userPass.getText());
+                        String url = "http://localhost/prueba/login.php?";
+                        //solicitud_variables = "&nombre=suscribete&puntaje=222";
+                        httpsolicitud = new Net.HttpRequest(httpMethod);
+                        httpsolicitud.setUrl(url);
+                        httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+                        Gdx.net.sendHttpRequest(httpsolicitud,LoginScreen.this);
+                        // Fin conexion http
                         return true;
                     }
                 }
@@ -135,6 +147,35 @@ public class LoginScreen implements Screen {
 
     @Override
     public void dispose() {
+
+    }
+
+    @Override
+    public void handleHttpResponse(Net.HttpResponse httpResponse) {
+        final String Response = httpResponse.getResultAsString();
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                if(Response.isEmpty()){
+                    Gdx.app.log("conexion","fallida");
+                    g.setScreen(new MainScreen(g));
+                }else {
+                    UInfo.setInfo(Response);
+                    //Gdx.app.log("conexion",UInfo.getName());
+                    Gdx.app.log("conexion","resuelta");
+                    g.setScreen(new UserGroupsScreen(g,UInfo));
+                }
+            }
+        });
+    }
+
+    @Override
+    public void failed(Throwable t) {
+
+    }
+
+    @Override
+    public void cancelled() {
 
     }
 }

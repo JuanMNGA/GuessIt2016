@@ -10,6 +10,7 @@ import com.badlogic.gdx.Net.HttpResponse;
 import com.badlogic.gdx.Net.HttpResponseListener;
 import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.skel.util.UserInfo;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -26,6 +27,8 @@ public class Connection implements HttpResponseListener{
 
     boolean validatedUser = false;
     boolean createdUser = false;
+
+    UserInfo UInfo = new UserInfo();
 
     public Connection(){}
 
@@ -74,6 +77,22 @@ public class Connection implements HttpResponseListener{
         return createdUser;
     }
 
+    public void setUserInfo(final String str){
+        Gdx.app.postRunnable(new Runnable() {
+            @Override
+            public void run() {
+                UInfo.setInfo(str);
+                validatedUser = true;
+                System.out.println(UInfo.getName()+" "+validatedUser);
+            }
+        });
+    }
+
+    public UserInfo getUserInfo(){
+        return UInfo;
+    }
+
+
     public boolean createUser(String[] info){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("nombre", info[0]);
@@ -121,15 +140,16 @@ public class Connection implements HttpResponseListener{
         Gdx.net.sendHttpRequest(httpsolicitud, new HttpResponseListener() {
             @Override
             public void handleHttpResponse(HttpResponse httpResponse) {
-                String A = httpResponse.getResultAsString();
-                if(!A.isEmpty())
-                    Gdx.app.log("conexion",A);
-                if(!A.isEmpty()){
+                String Response = httpResponse.getResultAsString();
+                if(!Response.isEmpty())
+                    Gdx.app.log("conexion",Response);
+                if(!Response.isEmpty()){
                     // PARA ROMPER EL THREAD HANDLE HAY QUE HACER UNA LLAMADA A OTRA FUNCION, LA FUNCION QUE SEA, DA IGUAL, PERO ROMPE EL HANDLE Y VUELVE A LA NORMALIDAD
-                    changeValidated(true);
+                    //changeValidated(true);
+                    setUserInfo(Response);
                     Gdx.app.log("login","logueado con exito");
                 }else{
-                    changeValidated(false);
+                    //changeValidated(false);
                     Gdx.app.log("login","fallo al loguear");
                 }
             }

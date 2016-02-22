@@ -81,7 +81,7 @@ public class MainScreen implements Screen {
 	}
 
 	public void create () {
-		stage = new Stage(new StretchViewport(320,500));
+		stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
 		//Setting up Basic Skin (default skin)
 		skin = Utils.createBasicSkin();
