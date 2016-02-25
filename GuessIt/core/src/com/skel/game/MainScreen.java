@@ -2,6 +2,7 @@ package com.skel.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
@@ -17,7 +18,6 @@ import com.skel.util.Utils;
 
 public class MainScreen implements Screen {
 	Skin skin;
-	BitmapFont font, font_label;
 	Stage stage;
 
 	Game g;
@@ -81,8 +81,17 @@ public class MainScreen implements Screen {
 	}
 
 	public void create () {
-		stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+		stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+			@Override
+			public boolean keyDown(int keyCode) {
+				if (keyCode == Input.Keys.BACK) {
+					Gdx.app.exit();
+				}
+				return super.keyDown(keyCode);
+			}
+		};
 		Gdx.input.setInputProcessor(stage);
+		Gdx.input.setCatchBackKey(true);
 		//Setting up Basic Skin (default skin)
 		skin = Utils.createBasicSkin();
 

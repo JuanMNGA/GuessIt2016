@@ -6,10 +6,7 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 
 /**
@@ -33,17 +30,26 @@ public class Utils {
         TextureAtlas basic_atlas = new TextureAtlas(Gdx.files.internal("images_packed/basic.atlas"));
         Skin tmpSkin = new Skin();
         //Add font
-        tmpSkin.add("default",CreateFont(36));
+        tmpSkin.add("default",CreateFont(30));
         tmpSkin.add("label",CreateFont(24));
+        tmpSkin.add("group",CreateFont(18));
         tmpSkin.addRegions(basic_atlas);
         //TextButton Style
         TextButton.TextButtonStyle tbStyle = new TextButton.TextButtonStyle();
         tbStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_idle"));
         tbStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
-        tbStyle.checked = null; //new TextureRegionDrawable(skin.getRegion("basic_button_push"));
+        tbStyle.checked = null;//new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
         tbStyle.over = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
         tbStyle.font = tmpSkin.getFont("default");
         tmpSkin.add("default",tbStyle);
+        // TextButton groups
+        tbStyle = new TextButton.TextButtonStyle();
+        tbStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_idle"));
+        tbStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
+        tbStyle.checked = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
+        tbStyle.over = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
+        tbStyle.font = tmpSkin.getFont("group");
+        tmpSkin.add("group",tbStyle);
         //Label Style
         Label.LabelStyle lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
@@ -56,6 +62,28 @@ public class Utils {
         tfStyle.font = tmpSkin.getFont("default");
         tfStyle.fontColor = Color.WHITE;
         tmpSkin.add("default",tfStyle);
+        // ImageButton Style
+        // Search Icon
+        ImageButton.ImageButtonStyle ibStyle_Search = new ImageButton.ImageButtonStyle();
+        ibStyle_Search.imageUp = new TextureRegionDrawable(tmpSkin.getRegion("search_icon"));
+        tmpSkin.add("search_icon",ibStyle_Search);
+        // Join Icon
+        ImageButton.ImageButtonStyle ibStyle_Join = new ImageButton.ImageButtonStyle();
+        ibStyle_Join.imageUp = new TextureRegionDrawable(tmpSkin.getRegion("join_icon"));
+        tmpSkin.add("join_icon",ibStyle_Join);
+        //Checkbox Style
+        CheckBox.CheckBoxStyle cbStyle = new CheckBox.CheckBoxStyle();
+        cbStyle.checkboxOff = new TextureRegionDrawable(tmpSkin.getRegion("uncheck"));
+        cbStyle.checkboxOn = new TextureRegionDrawable(tmpSkin.getRegion("check"));
+        cbStyle.font = tmpSkin.getFont("default");
+        cbStyle.fontColor = Color.BLACK;
+        tmpSkin.add("default",cbStyle);
+        //Window Style
+        Window.WindowStyle wStyle = new Window.WindowStyle();
+        wStyle.titleFont = tmpSkin.getFont("default");
+        wStyle.titleFontColor = Color.BLACK;
+        wStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
+        tmpSkin.add("default",wStyle);
         //
         return tmpSkin;
     }

@@ -3,11 +3,25 @@ basic.png
 format: RGBA8888
 filter: Nearest,Nearest
 repeat: none
+join_icon
+  rotate: false
+  xy: 1, 23
+  size: 40, 40
+  orig: 40, 40
+  offset: 0, 0
+  index: -1
 basic_button_idle
   rotate: false
   xy: 1, 1
   size: 40, 20
   orig: 40, 20
+  offset: 0, 0
+  index: -1
+search_icon
+  rotate: false
+  xy: 43, 23
+  size: 40, 40
+  orig: 40, 40
   offset: 0, 0
   index: -1
 basic_button_push
@@ -19,15 +33,29 @@ basic_button_push
   index: -1
 basic_label
   rotate: false
-  xy: 85, 1
+  xy: 85, 43
   size: 40, 20
   orig: 40, 20
   offset: 0, 0
   index: -1
 basic_text_area
   rotate: false
-  xy: 127, 1
+  xy: 85, 21
   size: 40, 20
   orig: 40, 20
+  offset: 0, 0
+  index: -1
+check
+  rotate: false
+  xy: 127, 43
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+uncheck
+  rotate: false
+  xy: 127, 21
+  size: 20, 20
+  orig: 20, 20
   offset: 0, 0
   index: -1

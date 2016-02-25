@@ -1,9 +1,6 @@
 package com.skel.game;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -41,12 +38,25 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     String httpMethod = Net.HttpMethods.POST;
 
     public LoginScreen(Game g){
+        this.g = g;
+        create();
+    }
+
+    public void create(){
         skin = Utils.createBasicSkin();
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.BACK) {
+                    g.setScreen(new MainScreen(g));
+                }
+                return super.keyDown(keyCode);
+            }
+        };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
-        this.g = g;
     }
 
     public void createStageActors(){
