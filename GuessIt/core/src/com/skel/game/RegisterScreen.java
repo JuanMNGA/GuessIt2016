@@ -27,7 +27,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     //Items de la pantalla
     Label labelLogin,labelPass,labelName,labelLastname,labelEmail;
     TextField userLogin, userPass, userName, userLastname, userEmail;
-    TextButton LoginButton;
+    TextButton LoginButton, backButton;
 
     //Container
     Table scroll_contenedor;
@@ -75,6 +75,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
         userEmail = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
 
         LoginButton = new TextButton("Register",skin);
+        backButton = new TextButton("Back",skin.get("default", TextButton.TextButtonStyle.class));
 
         //Activar caracteristicas de los actores
         //Labels
@@ -130,6 +131,13 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                 }
         );
 
+        backButton.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                g.setScreen(new MainScreen(g));
+                return true;
+            }
+        });
+
         //Creamos la tabla contenedora de nuestra interfaz de registro
         //Se pueden "encadenar" funciones para el control del tamaño, la posicion nos la da la propia tabla
 
@@ -176,6 +184,12 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
         scroll_contenedor.row();
 
         scroll_contenedor.add(LoginButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
+
+        scroll_contenedor.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+
+        scroll_contenedor.row();
 
         ScrollPane scroller = new ScrollPane(scroll_contenedor);
 

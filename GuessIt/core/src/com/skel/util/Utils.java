@@ -33,6 +33,7 @@ public class Utils {
         tmpSkin.add("default",CreateFont(30));
         tmpSkin.add("label",CreateFont(24));
         tmpSkin.add("group",CreateFont(18));
+        tmpSkin.add("point",CreateFont(40));
         tmpSkin.addRegions(basic_atlas);
         //TextButton Style
         TextButton.TextButtonStyle tbStyle = new TextButton.TextButtonStyle();
@@ -50,12 +51,34 @@ public class Utils {
         tbStyle.over = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
         tbStyle.font = tmpSkin.getFont("group");
         tmpSkin.add("group",tbStyle);
+        // TextButton points
+        tbStyle = new TextButton.TextButtonStyle();
+        tbStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("puntuacion"));
+        tbStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("puntuacion"));
+        tbStyle.checked = null;
+        tbStyle.over = null;
+        tbStyle.font = tmpSkin.getFont("group");
+        tmpSkin.add("point",tbStyle);
+        // TextButton report
+        tbStyle = new TextButton.TextButtonStyle();
+        tbStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("report"));
+        tbStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("report"));
+        tbStyle.checked = null;
+        tbStyle.over = null;
+        tbStyle.font = tmpSkin.getFont("group");
+        tmpSkin.add("report",tbStyle);
         //Label Style
         Label.LabelStyle lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
         lStyle.font = tmpSkin.getFont("label");
         lStyle.fontColor = Color.BLACK;
         tmpSkin.add("default",lStyle);
+        // Puntuacion style
+        lStyle = new Label.LabelStyle();
+        lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
+        lStyle.font = tmpSkin.getFont("point");
+        lStyle.fontColor = Color.BLACK;
+        tmpSkin.add("point", lStyle);
         //TextArea Style
         TextField.TextFieldStyle tfStyle = new TextField.TextFieldStyle();
         tfStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_text_area"));

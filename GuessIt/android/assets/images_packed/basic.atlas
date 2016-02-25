@@ -52,9 +52,23 @@ check
   orig: 20, 20
   offset: 0, 0
   index: -1
-uncheck
+puntuacion
   rotate: false
   xy: 127, 21
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+report
+  rotate: false
+  xy: 149, 43
+  size: 20, 20
+  orig: 20, 20
+  offset: 0, 0
+  index: -1
+uncheck
+  rotate: false
+  xy: 149, 21
   size: 20, 20
   orig: 20, 20
   offset: 0, 0

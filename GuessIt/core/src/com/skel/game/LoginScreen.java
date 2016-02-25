@@ -28,7 +28,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     //Items de la pantalla
     Label labelLogin,labelPass;
     TextField userLogin, userPass;
-    TextButton LoginButton;
+    TextButton LoginButton, backButton;
 
     Game g;
 
@@ -66,6 +66,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
         labelPass = new Label("Password",skin.get("default", Label.LabelStyle.class));
         userPass = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
         LoginButton = new TextButton("Login",skin);
+        backButton = new TextButton("Back",skin.get("default", TextButton.TextButtonStyle.class));
 
         //Activar caracteristicas de los actores
         //Labels
@@ -92,7 +93,8 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
 
         userPass.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.3f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
-        LoginButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.1f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+        LoginButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.2f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+        backButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.1f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
         //Funciones callback
         LoginButton.addListener(
@@ -114,12 +116,20 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                 }
         );
 
+        backButton.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                g.setScreen(new MainScreen(g));
+                return true;
+            }
+        });
+
         //Anadimos actores al stage
         stage.addActor(labelLogin);
         stage.addActor(userLogin);
         stage.addActor(labelPass);
         stage.addActor(userPass);
         stage.addActor(LoginButton);
+        stage.addActor(backButton);
     }
 
     @Override
@@ -173,7 +183,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                     UInfo.setInfo(Response);
                     //Gdx.app.log("conexion",UInfo.getName());
                     Gdx.app.log("conexion","resuelta");
-                    g.setScreen(new UserGroupsScreen(g,UInfo));
+                    g.setScreen(new MenuGameScreen(g,UInfo));
                 }
             }
         });
