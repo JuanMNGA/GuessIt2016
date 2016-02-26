@@ -60,7 +60,7 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
 
         //HashMap<String, String> parameters = new HashMap<String, String>();
         //parameters.put("id_usuario",String.valueOf(userInfo.getId()));
-        String url = "http://localhost/prueba/getGroups.php?";
+        String url = Utils.getUrl()+"getGroups.php?";
         //solicitud_variables = "&nombre=suscribete&puntaje=222";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
@@ -72,7 +72,7 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("id_usuario",String.valueOf(userInfo.getId()));
         parameters.put("id_aula",String.valueOf(grupo.getId()));
-        String url = "http://localhost/prueba/inviteGroup.php?";
+        String url = Utils.getUrl()+"inviteGroup.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));

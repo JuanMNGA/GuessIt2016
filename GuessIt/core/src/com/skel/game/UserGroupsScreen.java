@@ -95,7 +95,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
     public void refreshGroups(){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("id_usuario",String.valueOf(userInfo.getId()));
-        String url = "http://localhost/prueba/getGroupsJoined.php?";
+        String url = Utils.getUrl()+"getGroupsJoined.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));

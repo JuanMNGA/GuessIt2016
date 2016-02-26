@@ -119,7 +119,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                         parameters.put("usuario",userLogin.getText());
                         parameters.put("password",userPass.getText());
                         parameters.put("alta",dFormat.format(new Date(TimeUtils.millis())));
-                        String url = "http://localhost/prueba/register.php?";
+                        String url = Utils.getUrl()+"register.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";
                         httpsolicitud = new Net.HttpRequest(httpMethod);
                         httpsolicitud.setUrl(url);

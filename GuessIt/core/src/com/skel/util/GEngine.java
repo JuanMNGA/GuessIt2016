@@ -52,7 +52,7 @@ public class GEngine {
     }
 
     public void nextDefinition(){
-        current_def++;
+            current_def++;
     }
 
     public boolean compare(String answer){

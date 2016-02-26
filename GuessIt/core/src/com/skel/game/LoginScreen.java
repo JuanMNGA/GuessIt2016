@@ -104,7 +104,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                         HashMap<String, String> parameters = new HashMap<String, String>();
                         parameters.put("usuario",userLogin.getText());
                         parameters.put("password",userPass.getText());
-                        String url = "http://localhost/prueba/login.php?";
+                        String url = Utils.getUrl()+"login.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";
                         httpsolicitud = new Net.HttpRequest(httpMethod);
                         httpsolicitud.setUrl(url);

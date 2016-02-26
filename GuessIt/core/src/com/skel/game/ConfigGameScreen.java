@@ -54,7 +54,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
     private void getCategories(){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("id_aula",String.valueOf(grupo.getId()));
-        String url = "http://localhost/prueba/getCategories.php?";
+        String url = Utils.getUrl()+"getCategories.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));

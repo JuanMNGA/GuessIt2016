@@ -71,6 +71,21 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         rateWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         rateWindow.setVisible(false);
         // Add window actors
+        // Final Round Window
+        final Window pointWindow = new Window("Round stats", skin.get("default", Window.WindowStyle.class));
+        pointWindow.setMovable(false);
+        pointWindow.setFillParent(true);
+        pointWindow.padTop(Gdx.graphics.getHeight()*0.05f);
+        pointWindow.getTitleLabel().setAlignment(Align.center);
+        pointWindow.getTitleLabel().setWrap(true);
+        pointWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        pointWindow.setVisible(false);
+
+        // Add window actors
+        // Label
+        final Label finalPoints = new Label("", skin.get("point", Label.LabelStyle.class));
+        finalPoints.setAlignment(Align.center);
+        finalPoints.setWrap(true);
         // Create actors
         // Labels
         final Label numberStarsLabel = new Label("0 Stars",skin.get("default", Label.LabelStyle.class));
@@ -151,21 +166,6 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         rateWindow.row();
         rateWindow.pack();
 
-        // Final Round Window
-        final Window pointWindow = new Window("Round stats", skin.get("default", Window.WindowStyle.class));
-        pointWindow.setMovable(false);
-        pointWindow.setFillParent(true);
-        pointWindow.padTop(Gdx.graphics.getHeight()*0.05f);
-        pointWindow.getTitleLabel().setAlignment(Align.center);
-        pointWindow.getTitleLabel().setWrap(true);
-        pointWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
-        pointWindow.setVisible(false);
-
-        // Add window actors
-        // Label
-        final Label finalPoints = new Label("", skin.get("point", Label.LabelStyle.class));
-        finalPoints.setAlignment(Align.center);
-        finalPoints.setWrap(true);
         // TextButtons
         TextButton newRound = new TextButton("New Round!", skin.get("default", TextButton.TextButtonStyle.class));
 
@@ -220,6 +220,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     answerText.setColor(Color.CYAN);
                     acierto = 1;
                     rateWindow.setVisible(true);
+                    Gdx.app.log("abrir ventana","rate abierta");
                     definitionToSend = engine.getDefinition();
                     // Nueva palabra
                     engine.nextDefinition();
@@ -287,7 +288,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         layoutTable.row();
 
         layoutTable.setFillParent(true);
-
+        
         stage.addActor(layoutTable);
         stage.addActor(rateWindow);
         stage.addActor(pointWindow);
@@ -321,7 +322,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         parameters.put("level",String.valueOf(selectedLv));
         parameters.put("id_aula",String.valueOf(grupo.getId()));
         parameters.put("test",String.valueOf(userInfo.getType()));
-        String url = "http://localhost/prueba/getDefinitions.php?";
+        String url = Utils.getUrl()+"getDefinitions.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -339,7 +340,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         parameters.put("intentos", String.valueOf(3-numIntentos));
         parameters.put("reporte", String.valueOf(reporte));
         parameters.put("fecha",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(TimeUtils.millis())));
-        String url = "http://localhost/prueba/sendRate.php?";
+        String url = Utils.getUrl()+"sendRate.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));

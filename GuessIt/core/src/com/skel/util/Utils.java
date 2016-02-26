@@ -110,4 +110,8 @@ public class Utils {
         //
         return tmpSkin;
     }
+
+    public static String getUrl(){
+        return "http://localhost/GuessIt/game/";
+    }
 }
