@@ -41,6 +41,36 @@ class Main extends CI_Controller
 		$this->load->view('main/admin/footer');
 	}
 	
+	function show_add_teacher_admin(){
+		$this->load->view('main/admin/header');
+		$this->load->view('main/admin/side_menu');
+		$this->load->view('slave_menus/admin/slave_menu_teacher');
+		$this->load->view('content/admin/add_teacher_view');
+		$this->load->view('main/admin/footer');
+	}
+	
+	function add_teacher(){
+		$this->load->model('Login_Register_Model');
+		$now = date("Y-m-d H:i:s");
+		$data_to_store = array(
+			'nombre' => $this->input->post('name'),
+			'apellidos' => $this->input->post('lastname'),
+			'email' => $this->input->post('email'),
+			'password' => password_hash($this->input->post('password'),PASSWORD_DEFAULT),
+			'centro' => $this->input->post('center'),
+			'alta' => $now,
+			'validar' => 1,
+			'tipo' => 1
+		);
+		//if the insert has returned true then we show the flash message
+		if ($this->Login_Register_Model->store_user($data_to_store)) {
+			$data['flash_message'] = TRUE;
+		} else {
+			$data['flash_message'] = FALSE;
+		}
+		$this->show_add_teacher_admin();
+	}
+	
 	function show_teacher_validate_admin(){
 		$this->load->view('main/admin/header');
 		$this->load->view('main/admin/side_menu');
@@ -134,6 +164,57 @@ class Main extends CI_Controller
 		$this->load->view('main/teacher/footer');
 	}
 	
+	function show_add_definitions_teacher(){
+		$this->load->model('Login_Register_Model');
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/select_group_definition',$data);
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function add_definitions(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition',$data);
+		$id_grupo = $this->input->post('grupo_seleccionado');
+		$data = array(
+			'id_grupo' => $id_grupo,
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/add_definitions_form',$data);
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function store_definition(){
+		$this->load->model('Teacher_Model');
+		$now = date("Y-m-d H:i:s");
+		$data_to_store = array(
+			'nivel' => $this->input->post('level'),
+			'palabra' => $this->input->post('word'),
+			'articulo' => $this->input->post('article'),
+			'frase' => $this->input->post('definition'),
+			'pista' => $this->input->post('hint'),
+			'id_categoria' => $this->input->post('categoria'),
+			'id_aula' => $this->input->post('gid'),
+			'id_usuario' => $this->input->post('uid'),
+			'fecha' => $now,
+			'validar' => 1
+		);
+		$this->Teacher_Model->store_def($data_to_store);
+		$this->add_definitions();
+	}
+	
 	function show_report_teacher(){
 		$this->load->view('main/teacher/header');
 		$this->load->view('main/teacher/side_menu');
@@ -153,6 +234,76 @@ class Main extends CI_Controller
 		$this->load->view('main/teacher/side_menu');
 		$this->load->view('slave_menus/teacher/slave_menu_students');
 		$this->load->view('main/teacher/footer');
+	}
+	
+	function show_add_student_teacher(){
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/add_student');
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function show_validate_student_teacher(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/select_group_student',$data);
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function validate_student(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/select_group_student',$data);
+		$id_grupo = $this->input->post('grupo_seleccionado');
+		$data = array(
+			'id_grupo' => $id_grupo
+		);
+		$this->load->view('content/teacher/validate_students',$data);
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function validate_student_form(){
+		$query = $this->input->post('estudiantes_validados');
+		$this->load->model('Teacher_Model');
+		foreach($query as $id_alumno){
+			$this->Teacher_Model->student_validate($id_alumno);
+		}
+		$this->show_validate_student_teacher();
+	}
+	
+	function add_student(){
+		$this->load->model('Login_Register_Model');
+		$now = date("Y-m-d H:i:s");
+		$data_to_store = array(
+			'nombre' => $this->input->post('name'),
+			'apellidos' => $this->input->post('lastname'),
+			'usuario' => $this->input->post('username'),
+			'email' => $this->input->post('email'),
+			'password' => password_hash($this->input->post('password'),PASSWORD_DEFAULT),
+			'alta' => $now,
+			'validar' => 1,
+			'tipo' => 0
+		);
+		//if the insert has returned true then we show the flash message
+		if ($this->Login_Register_Model->store_user($data_to_store)) {
+			$data['flash_message'] = TRUE;
+		} else {
+			$data['flash_message'] = FALSE;
+		}
+		$this->show_add_teacher_admin();
 	}
 	
 	function show_slave_classroom_teacher(){

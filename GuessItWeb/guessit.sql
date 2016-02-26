@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 17-02-2016 a las 02:18:16
+-- Tiempo de generación: 26-02-2016 a las 02:12:01
 -- Versión del servidor: 10.1.9-MariaDB
 -- Versión de PHP: 5.6.15
 
@@ -34,13 +34,6 @@ CREATE TABLE `aula` (
   `id_idioma` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Volcado de datos para la tabla `aula`
---
-
-INSERT INTO `aula` (`id`, `nombre`, `id_docente`, `activa`, `id_idioma`) VALUES
-(7, 'Alemán 2016', 14, 1, 1);
-
 -- --------------------------------------------------------
 
 --
@@ -53,14 +46,6 @@ CREATE TABLE `categoria` (
   `id_aula` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Volcado de datos para la tabla `categoria`
---
-
-INSERT INTO `categoria` (`id`, `nombre`, `id_aula`) VALUES
-(2, 'Kéndër', 7),
-(3, 'Carmén', 7);
-
 -- --------------------------------------------------------
 
 --
@@ -69,6 +54,7 @@ INSERT INTO `categoria` (`id`, `nombre`, `id_aula`) VALUES
 
 CREATE TABLE `definiciones` (
   `id` int(11) NOT NULL,
+  `nivel` int(11) NOT NULL,
   `palabra` varchar(32) NOT NULL,
   `articulo` varchar(16) DEFAULT NULL,
   `frase` text NOT NULL,
@@ -91,15 +77,6 @@ CREATE TABLE `idiomas` (
   `nombre` varchar(32) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
---
--- Volcado de datos para la tabla `idiomas`
---
-
-INSERT INTO `idiomas` (`id`, `nombre`) VALUES
-(1, 'German'),
-(2, 'English'),
-(4, 'Spanish');
-
 -- --------------------------------------------------------
 
 --
@@ -108,8 +85,9 @@ INSERT INTO `idiomas` (`id`, `nombre`) VALUES
 
 CREATE TABLE `puntuaciones` (
   `id` int(11) NOT NULL,
-  `id_usuarios` int(11) NOT NULL,
+  `id_usuario` int(11) NOT NULL,
   `id_palabra` int(11) NOT NULL,
+  `puntuacion` int(11) NOT NULL,
   `acierto` int(8) NOT NULL,
   `pista` int(8) NOT NULL,
   `intentos` int(8) NOT NULL,
@@ -128,22 +106,6 @@ CREATE TABLE `score` (
   `nombre` varchar(32) NOT NULL,
   `puntaje` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `score`
---
-
-INSERT INTO `score` (`id`, `nombre`, `puntaje`) VALUES
-(1, 'suscribete', 222),
-(2, 'suscribete', 222),
-(3, 'suscribete', 222),
-(4, 'suscribete', 222),
-(5, 'suscribete', 222),
-(6, 'suscribete', 222),
-(7, 'suscribete', 222),
-(8, 'suscribete', 222),
-(9, 'suscribete', 222),
-(10, 'suscribete', 222);
 
 -- --------------------------------------------------------
 
@@ -164,19 +126,6 @@ CREATE TABLE `usuarios` (
   `tipo` int(8) NOT NULL COMMENT '0 = alumno, 1 = docente',
   `test` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
-
---
--- Volcado de datos para la tabla `usuarios`
---
-
-INSERT INTO `usuarios` (`id`, `nombre`, `apellidos`, `email`, `usuario`, `password`, `alta`, `validar`, `centro`, `tipo`, `test`) VALUES
-(1, 'Rogencio', 'Penelo', 'rog@gmail.com', 'rog', '$2y$10$LgLkQxEQPh6EwkzbkHNexOPth3UP7svb3M6./90evAssl02cGFUK6', '2016-02-09 14:08:40', 0, NULL, 0, 1),
-(2, 'Anselmo', 'Paneles', 'anspel@gmail.com', 'ans', '$2y$10$.IOWY5/8zB3IwmkudFWnl.bQfK8xH7lEM2ZgDWmyy3WxwtY219UeC', '2016-02-09 14:08:40', 0, NULL, 0, 0),
-(3, 'Marria', 'Unpajote', 'mar@gmail.com', 'mar', '$2y$10$3wlUt.ZfGNu1icTVxDcNVOuneLExrQhrs43LCsG8zsWSL./eAmipa', '2016-02-09 14:08:40', 0, NULL, 0, 1),
-(4, 'asd', 'asd', 'asd', 'asd', '$2y$10$Bkj93CsSa7DjCMWFkkoolOLMlxZnQ9MoyiMPs5mBMqD5VI6MQ6o8S', '2016-02-09 14:08:40', 0, NULL, 0, 0),
-(5, 'qwe', 'qwe', 'qwe', 'qwe', '$2y$10$kERic3dEpiivqfQiZMJO8.oqTVx0Cbx1bSmAFlcMjyDd8uQTdDodW', '2016-02-09 14:24:10', 1, NULL, 0, 1),
-(12, 'Juan Miguel', 'Ruiz Ladrón', 'juanmiguel.ruiz.ladron@gmail.com', 'admin', '$2y$10$AvADJREdDfgsIQNyA.8ebOF0h1ElYJnMcqBPuJsdWDaeYJFG1LUSq', '2016-02-09 20:28:30', 1, NULL, 2, 0),
-(14, 'prueba', 'prueba', 'prueba@prueba.com', NULL, '$2y$10$cIbj7wTaUbChqtft3WEOEO91tXD3xJQvTKJtZlq3JxxAEeSr0Blbu', '2016-02-09 23:41:15', 1, 'UCA', 1, 0);
 
 -- --------------------------------------------------------
 
@@ -251,17 +200,17 @@ ALTER TABLE `usuarios_aula`
 -- AUTO_INCREMENT de la tabla `aula`
 --
 ALTER TABLE `aula`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 --
 -- AUTO_INCREMENT de la tabla `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 --
 -- AUTO_INCREMENT de la tabla `definiciones`
 --
 ALTER TABLE `definiciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 --
 -- AUTO_INCREMENT de la tabla `idiomas`
 --
@@ -271,7 +220,7 @@ ALTER TABLE `idiomas`
 -- AUTO_INCREMENT de la tabla `puntuaciones`
 --
 ALTER TABLE `puntuaciones`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 --
 -- AUTO_INCREMENT de la tabla `score`
 --
@@ -286,7 +235,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `usuarios_aula`
 --
 ALTER TABLE `usuarios_aula`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

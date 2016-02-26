@@ -18,4 +18,12 @@ class Groups_Model extends CI_Model
 		$insert = $this->db->insert('categoria',$data);
 		return $insert;
 	}
+	
+	function get_groups($data){
+		$this->db->select('id');
+		$this->db->from('aula');
+		$this->db->where('id_docente',$data['id_docente']);
+		$res = $this->db->get();
+		return $res->row();
+	}
 }
