@@ -251,7 +251,8 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                     Gdx.app.log("conexion","fallida");
                 }else{
                     Gdx.app.log("conexion",Response);
-                    Gdx.app.log("time", dFormat.format(new Date(TimeUtils.millis()).toString()));
+                    //Gdx.app.log("time", dFormat.format(new Date(TimeUtils.millis()).toString()));
+                    g.setScreen(new MainScreen(g));
                 }
             }
         });

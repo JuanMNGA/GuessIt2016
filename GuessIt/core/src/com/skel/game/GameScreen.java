@@ -268,6 +268,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         hintButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 hintLabel.setText(engine.getHint());
+                hintLabel.setVisible(true);
                 pista = 1;
                 return true;
             }

@@ -173,7 +173,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                         ScrollTable.add(tmpTButton).width(Gdx.graphics.getWidth() * 0.7f).height(Gdx.graphics.getHeight() * 0.15f);
                         ScrollTable.row();
                     }
-                    Gdx.app.log("conexion", "tabla creada");
+                    /*Gdx.app.log("conexion", "tabla creada");
                     ScrollPane scroller = new ScrollPane(ScrollTable);
                     Gdx.app.log("conexion", "scroll creado");
                     final Table table = new Table();
@@ -181,11 +181,20 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                     table.add(scroller).fill().expand();
 
                     //Anadimos la tabla al stage
-                    stage.addActor(table);
+                    stage.addActor(table);*/
                     Gdx.app.log("conexion", "tabla grupos creada");
                 } else {
                     Gdx.app.log("conexion", "ningun resultado");
                 }
+                Gdx.app.log("conexion", "tabla creada");
+                ScrollPane scroller = new ScrollPane(ScrollTable);
+                Gdx.app.log("conexion", "scroll creado");
+                final Table table = new Table();
+                table.setFillParent(true);
+                table.add(scroller).fill().expand();
+
+                //Anadimos la tabla al stage
+                stage.addActor(table);
             }
         });
     }
