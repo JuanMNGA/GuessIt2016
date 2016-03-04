@@ -3,7 +3,9 @@
 	$mysqli = mysqli_connect("localhost","root","","guessit");
 	mysqli_query($mysqli,"SET NAMES 'utf8'");
 	$res = mysqli_query($mysqli, "SELECT * FROM categoria WHERE id_aula='".$id_grupo."'");
-
+	echo '<div class="form-group">';
+    echo '<label class="control-label col-sm-2" for="hint">Category:</label>';
+    echo '<div class="col-sm-10">';
 	if(count($res) > 0){
 			echo '<select name="categoria">';
 			foreach($res as $row){
@@ -11,7 +13,8 @@
 			}
 			echo '</select>';
 	}
-	
+	echo '</div>';
+    echo '</div>';
 	echo '<div class="form-group">';
 	//echo '<label class="control-label col-sm-2" for="gid">Group ID:</label>';
 	echo '<div class="col-sm-10">';

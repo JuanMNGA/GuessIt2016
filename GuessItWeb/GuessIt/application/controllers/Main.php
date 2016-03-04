@@ -216,15 +216,68 @@ class Main extends CI_Controller
 	}
 	
 	function show_report_teacher(){
+		$this->load->model('Login_Register_Model');
 		$this->load->view('main/teacher/header');
 		$this->load->view('main/teacher/side_menu');
-		$this->load->view('reports/teacher/report_students');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('reports/teacher/report_select_group_students',$data);
+		//$this->load->view('reports/teacher/report_students');
 		$this->load->view('main/teacher/footer');
 	}
 	
-	function show_report_definitions_teacher(){
+	function show_report_teacher_generate(){
+		$this->load->model('Login_Register_Model');
 		$this->load->view('main/teacher/header');
 		$this->load->view('main/teacher/side_menu');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('reports/teacher/report_select_group_students',$data);
+		$id_grupo = $this->input->post('grupo_seleccionado');
+		$data = array(
+			'id_grupo' => $id_grupo,
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('reports/teacher/report_students',$data);
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function show_report_teacher_result(){
+		$data = array(
+			'id_grupo' => $this->input->post('gid'),
+			'id_docente' => $this->input->post('uid'),
+			'alumnos' => $this->input->post('alumnos_seleccionados'),
+			'informe' => $this->input->post('informe_seleccionado'),
+			'tipo' => $this->input->post('tipo'),
+			'rango' => $this->input->post('rango'),
+			'rango_ini' => $this->input->post('rango_ini'),
+			'rango_fin' => $this->input->post('rango_fin'),
+			'nivel' => $this->input->post('nivel_seleccionado')
+		);
+		
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('reports/teacher/report_select_group_students',$data);
+		
+		// Aqui el php de la grafica
+		$this->load->view('reports/teacher/report_students_result',$data);
+		
+		$this->load->view('main/teacher/footer');		
+	}
+	
+	function show_report_definitions_teacher(){
+		$this->load->model('Login_Register_Model');
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('reports/teacher/report_select_group_definitions',$data);
 		$this->load->view('reports/teacher/report_definitions');
 		$this->load->view('main/teacher/footer');
 	}

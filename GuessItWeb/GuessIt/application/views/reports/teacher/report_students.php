@@ -5,7 +5,7 @@
 		<li role="presentation" > <a href="<?php echo base_url('index.php/Main/show_report_definitions_teacher')?>"> Informe por definiciones </a> </li>
 	</ul>
 	
-	<?php echo form_open('index.php/Main/input_login_user/','class="form"')?>
+	<?php echo form_open('index.php/Main/show_report_teacher_result/','class="form"')?>
 	<div class="col-md-6">
 	
 		<!-- Lista de alumnos -->
@@ -14,9 +14,10 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"> Alumnos </div>
 				<div class="panel-body">
-					<select multiple id="alumnos_seleccionados">
-						<option value="1"> 49076548E </option>
-						<option value="2"> 98765498H </option>
+					<select multiple id="alumnos_seleccionados[]">
+						<?php 
+							include('scripts/get_students_report.php');
+						?>
 					</select>
 				</div>
 			</div>
@@ -31,11 +32,11 @@
 					<select id="informe_seleccionado">
 						<option value="1"> Número de definiciones jugadas </option>
 						<option value="2"> Número / Porcentaje de definiciones acertadas </option>
-						<option value=""> Porcentaje de reportes que coinciden con el docente </option>
-						<option value=""> Número de definiciones introducidas </option>
-						<option value=""> Número de definiciones introducidas jugadas por cualquiera </option>
-						<option value=""> Número / Porcentaje de definiciones introducidas acertadas por cualquiera </option>
-						<option value=""> Valoración media recibida por las definiciones introducidas </option>
+						<option value="3"> Porcentaje de reportes que coinciden con el docente </option>
+						<option value="4"> Número de definiciones introducidas </option>
+						<option value="5"> Número de definiciones introducidas jugadas por cualquiera </option>
+						<option value="6"> Número / Porcentaje de definiciones introducidas acertadas por cualquiera </option>
+						<option value="7"> Valoración media recibida por las definiciones introducidas </option>
 					</select>
 				</div>
 			</div>
@@ -82,7 +83,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"> Niveles </div>
 				<div class="panel-body">
-					<select multiple id="niveles_seleccionados">
+					<select id="nivel_seleccionado">
 						<option value="1"> Nivel 1 </option>
 						<option value="2"> Nivel 2 </option>
 						<option value="3"> Nivel 3 </option>
@@ -91,6 +92,11 @@
 				</div>
 			</div>
 		</div>
+		
+		<?php
+			echo '<input type="hidden" class="form-control" name="gid" value="'.$id_grupo.'">';
+			echo '<input type="hidden" class="form-control" name="uid" value="'.$id_docente.'">';
+		?>
 		
 		<!-- Boton de generar -->
 		
