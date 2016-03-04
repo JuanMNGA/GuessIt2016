@@ -8,8 +8,9 @@ public class DesktopLauncher {
 	public static void main (String[] arg) {
 		LwjglApplicationConfiguration config = new LwjglApplicationConfiguration();
 		config.title = "GuessIt: Language Trainer";
-		config.height = 500;
-		config.width = 320;
+		config.height = 800;
+		config.width = 480;
+		config.resizable = false;
 		new LwjglApplication(new MainGame(), config);
 	}
 }

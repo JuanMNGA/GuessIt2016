@@ -1,5 +1,8 @@
 package com.skel.util;
 
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
+
 import java.util.StringTokenizer;
 
 /**
@@ -11,7 +14,11 @@ public class UserInfo {
 
     private int testType,userId;
 
-    public UserInfo(){}
+    private Preferences prefs;
+
+    public UserInfo(){
+        prefs = Gdx.app.getPreferences("UserState");
+    }
 
     public UserInfo(String Info){
         StringTokenizer stroker = new StringTokenizer(Info,";");
@@ -24,6 +31,8 @@ public class UserInfo {
             usuario = stroker.nextElement().toString();
             testType = Integer.parseInt(stroker.nextElement().toString());
         }
+
+        prefs = Gdx.app.getPreferences("UserState");
     }
 
     public void setInfo(String Info){
@@ -61,5 +70,25 @@ public class UserInfo {
 
     public int getType(){
         return testType;
+    }
+
+    public void addDefPlayed(){
+        prefs.putInteger("defplayed", prefs.getInteger("defplayed", 0) + 1);
+        prefs.flush();
+    }
+
+    public void addedNewDef(){
+        prefs.putInteger("defplayed", prefs.getInteger("defplayed") - 20);
+        prefs.flush();
+    }
+
+    public boolean canAddDefinition(){
+        if(prefs.getInteger("defplayed", 0) >= 20){
+            //prefs.putInteger("defplayed", 0);
+            //prefs.flush();
+            return true;
+        }else{
+            return false;
+        }
     }
 }

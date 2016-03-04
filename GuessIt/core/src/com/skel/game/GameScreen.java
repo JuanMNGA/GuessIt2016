@@ -32,6 +32,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
     private Stage stage;
     private Skin skin;
 
+    private Skin sec_Skin = Utils.createResultSkin();
+
     private Group grupo;
 
     Net.HttpRequest httpsolicitud;
@@ -94,6 +96,10 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         Label orLabel = new Label("OR", skin.get("default", Label.LabelStyle.class));
         orLabel.setAlignment(Align.center);
         orLabel.setWrap(true);
+
+        final Label resultDefLabel = new Label("", sec_Skin.get("result", Label.LabelStyle.class));
+        resultDefLabel.setWrap(true);
+
         // Buttons
         TextButton oneStar = new TextButton("1",skin.get("point", TextButton.TextButtonStyle.class));
         TextButton twoStar = new TextButton("2",skin.get("point", TextButton.TextButtonStyle.class));
@@ -136,9 +142,12 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 Gdx.app.log("puntuacion","enviada");
                 rateWindow.setVisible(false);
+                if(acierto == 1)
+                    userInfo.addDefPlayed();
                 sendRate();
                 numIntentos = 3;
                 tryLabel.setText("Chances: " + String.valueOf(numIntentos));
+                // Añadimos un punto al marcador oculto para permitir introducir nuevas definiciones.
                 if(engine.endRound()){
                     // Change to final rate screen
                     Gdx.app.log("cambio","a pantalla de puntuacion final");
@@ -146,23 +155,25 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                 return true;
             }
         });
-        rateWindow.add(oneStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add(twoStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add(threeStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.2f);
+        rateWindow.add(resultDefLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(5);
+        rateWindow.row();
+        rateWindow.add(oneStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add(twoStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add(threeStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.row();
         rateWindow.add(numberStarsLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
         rateWindow.row();
-        rateWindow.add(orLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(5);
+        //rateWindow.add(orLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
+        //rateWindow.row();
+        rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add(reportButton).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.row();
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add(reportButton).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.2f);
-        rateWindow.row();
-        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(5);
+        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.15f).colspan(5);
         rateWindow.row();
         rateWindow.pack();
 
@@ -179,6 +190,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         TextButton backMenu = new TextButton("Back to menu", skin.get("default", TextButton.TextButtonStyle.class));
         backMenu.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                g.setScreen(new MenuGameScreen(g,userInfo, grupo));
                 return true;
             }
         });
@@ -221,6 +233,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     acierto = 1;
                     rateWindow.setVisible(true);
                     Gdx.app.log("abrir ventana","rate abierta");
+                    resultDefLabel.setText(engine.getPassPhrase());
                     definitionToSend = engine.getDefinition();
                     // Nueva palabra
                     engine.nextDefinition();
@@ -242,6 +255,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     if(numIntentos == 0){
                         acierto = 0;
                         rateWindow.setVisible(true);
+                        resultDefLabel.setText(engine.getWrongPhrase());
                         definitionToSend = engine.getDefinition();
                         // Nueva palabra
                         engine.nextDefinition();
@@ -267,9 +281,11 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         // Button stuff
         hintButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                hintLabel.setText(engine.getHint());
-                hintLabel.setVisible(true);
-                pista = 1;
+                if(numIntentos < 3) {
+                    hintLabel.setText(engine.getHint());
+                    hintLabel.setVisible(true);
+                    pista = 1;
+                }
                 return true;
             }
         });
@@ -289,7 +305,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         layoutTable.row();
 
         layoutTable.setFillParent(true);
-        
+
         stage.addActor(layoutTable);
         stage.addActor(rateWindow);
         stage.addActor(pointWindow);
@@ -386,6 +402,13 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                         engine = tmpEngine;
                         definitionLabel.setText(engine.getPhrase());
                         tryLabel.setText("Chances: " + String.valueOf(numIntentos));
+                    }
+                });
+            }else{
+                Gdx.app.postRunnable(new Runnable() {
+                    @Override
+                    public void run() {
+                        g.setScreen(new ConfigGameScreen(g,userInfo,grupo));
                     }
                 });
             }

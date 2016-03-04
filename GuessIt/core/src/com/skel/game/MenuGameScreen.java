@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.skel.util.Group;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
@@ -22,28 +23,44 @@ public class MenuGameScreen implements Screen {
     private Skin skin;
     Game g;
     UserInfo userInfo;
+    Group grupo;
 
     public void createStageActors(){
         TextButton playButton = new TextButton("Play!", skin.get("default", TextButton.TextButtonStyle.class));
         TextButton statsButton = new TextButton("Stats", skin.get("default", TextButton.TextButtonStyle.class));
         TextButton backButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton newDefButton = new TextButton("Add a definition!", skin.get("default", TextButton.TextButtonStyle.class));
+
+        if(userInfo.canAddDefinition()){
+            newDefButton.setVisible(true);
+        }else{
+            newDefButton.setVisible(false);
+        }
 
         playButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                g.setScreen(new UserGroupsScreen(g,userInfo));
+                g.setScreen(new ConfigGameScreen(g,userInfo, grupo));
                 return true;
             }
         });
 
         statsButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                g.setScreen(new StatsScreen(g, userInfo, grupo));
+                return true;
+            }
+        });
+
+        newDefButton.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                g.setScreen(new NewDefScreen(g, userInfo, grupo));
                 return true;
             }
         });
 
         backButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                g.setScreen(new LoginScreen(g));
+                g.setScreen(new UserGroupsScreen(g, userInfo));
                 return true;
             }
         });
@@ -54,7 +71,9 @@ public class MenuGameScreen implements Screen {
         layout.row();
         layout.add(statsButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f);
         layout.row();
-        layout.add().width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f);
+        layout.add(newDefButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f);
+        layout.row();
+        layout.add().width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
         layout.row();
         layout.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f);
         layout.row();
@@ -72,10 +91,10 @@ public class MenuGameScreen implements Screen {
         createStageActors();
     }
 
-    public MenuGameScreen(Game g, UserInfo UInfo){
+    public MenuGameScreen(Game g, UserInfo UInfo, Group grupo){
         this.g = g;
         userInfo = UInfo;
-
+        this.grupo = grupo;
         create();
     }
     @Override

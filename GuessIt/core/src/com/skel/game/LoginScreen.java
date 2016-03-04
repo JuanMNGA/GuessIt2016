@@ -183,7 +183,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                     UInfo.setInfo(Response);
                     //Gdx.app.log("conexion",UInfo.getName());
                     Gdx.app.log("conexion","resuelta");
-                    g.setScreen(new MenuGameScreen(g,UInfo));
+                    g.setScreen(new UserGroupsScreen(g,UInfo));
                 }
             }
         });

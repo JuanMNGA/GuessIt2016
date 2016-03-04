@@ -29,6 +29,14 @@ public class GEngine {
         return engine_definitions.get(current_def).getFrase().replace(engine_definitions.get(current_def).getPalabra(),"*****");
     }
 
+    public String getPassPhrase(){
+        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replace(engine_definitions.get(current_def).getPalabra(), "[GREEN]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
+    }
+
+    public String getWrongPhrase(){
+        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replace(engine_definitions.get(current_def).getPalabra(), "[RED]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
+    }
+
     public String getResultPhrase(){
         return engine_definitions.get(current_def).getFrase();
     }

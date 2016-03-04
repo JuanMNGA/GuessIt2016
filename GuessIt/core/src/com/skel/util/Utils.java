@@ -14,14 +14,27 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  */
 public class Utils {
 
-    public static BitmapFont CreateFont(int size){
+    public static BitmapFont CreateFont(int size, Color color){
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;
-        parameter.color = Color.WHITE;
+        parameter.color = color;
         parameter.minFilter = Texture.TextureFilter.Nearest;
         parameter.magFilter = Texture.TextureFilter.Linear;
         BitmapFont tmpFont = generator.generateFont(parameter);
+        tmpFont.getData().markupEnabled = true;
+        generator.dispose();
+        return tmpFont;
+    }
+
+    public static BitmapFont CreateResultFont(int size){
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = size;
+        parameter.minFilter = Texture.TextureFilter.Nearest;
+        parameter.magFilter = Texture.TextureFilter.Linear;
+        BitmapFont tmpFont = generator.generateFont(parameter);
+        tmpFont.getData().markupEnabled = true;
         generator.dispose();
         return tmpFont;
     }
@@ -30,10 +43,10 @@ public class Utils {
         TextureAtlas basic_atlas = new TextureAtlas(Gdx.files.internal("images_packed/basic.atlas"));
         Skin tmpSkin = new Skin();
         //Add font
-        tmpSkin.add("default",CreateFont(30));
-        tmpSkin.add("label",CreateFont(24));
-        tmpSkin.add("group",CreateFont(18));
-        tmpSkin.add("point",CreateFont(40));
+        tmpSkin.add("default",CreateFont(30, Color.WHITE));
+        tmpSkin.add("label",CreateFont(24, Color.BLACK));
+        tmpSkin.add("group",CreateFont(18, Color.WHITE));
+        tmpSkin.add("point",CreateFont(40, Color.BLACK));
         tmpSkin.addRegions(basic_atlas);
         //TextButton Style
         TextButton.TextButtonStyle tbStyle = new TextButton.TextButtonStyle();
@@ -71,19 +84,20 @@ public class Utils {
         Label.LabelStyle lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
         lStyle.font = tmpSkin.getFont("label");
-        lStyle.fontColor = Color.BLACK;
+        //tmpSkin.getFont("label").getData().markupEnabled = true;
         tmpSkin.add("default",lStyle);
         // Puntuacion style
         lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
         lStyle.font = tmpSkin.getFont("point");
-        lStyle.fontColor = Color.BLACK;
+        //tmpSkin.getFont("point").getData().markupEnabled = true;
         tmpSkin.add("point", lStyle);
         //TextArea Style
         TextField.TextFieldStyle tfStyle = new TextField.TextFieldStyle();
         tfStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_text_area"));
         tfStyle.font = tmpSkin.getFont("default");
         tfStyle.fontColor = Color.WHITE;
+        tfStyle.cursor = new TextureRegionDrawable(tmpSkin.getRegion("cursor"));
         tmpSkin.add("default",tfStyle);
         // ImageButton Style
         // Search Icon
@@ -111,7 +125,20 @@ public class Utils {
         return tmpSkin;
     }
 
+    public static Skin createResultSkin(){
+        TextureAtlas basic_atlas = new TextureAtlas(Gdx.files.internal("images_packed/basic.atlas"));
+        Skin tmpSkin = new Skin();
+        tmpSkin.add("result", CreateResultFont(20));
+        tmpSkin.addRegions(basic_atlas);
+        Label.LabelStyle lStyle = new Label.LabelStyle();
+        lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
+        lStyle.font = tmpSkin.getFont("result");
+        tmpSkin.add("result",lStyle);
+        return tmpSkin;
+    }
+
     public static String getUrl(){
-        return "http://localhost/GuessIt/game/";
+        return "http://192.168.1.107/GuessIt/game/";
+        //return "http://localhost/GuessIt/game/";
     }
 }

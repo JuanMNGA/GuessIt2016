@@ -41,8 +41,8 @@ basic_label
 basic_text_area
   rotate: false
   xy: 85, 21
-  size: 40, 20
-  orig: 40, 20
+  size: 20, 20
+  orig: 20, 20
   offset: 0, 0
   index: -1
 check
@@ -54,7 +54,7 @@ check
   index: -1
 puntuacion
   rotate: false
-  xy: 127, 21
+  xy: 107, 21
   size: 20, 20
   orig: 20, 20
   offset: 0, 0
@@ -68,8 +68,15 @@ report
   index: -1
 uncheck
   rotate: false
-  xy: 149, 21
+  xy: 129, 21
   size: 20, 20
   orig: 20, 20
+  offset: 0, 0
+  index: -1
+cursor
+  rotate: false
+  xy: 85, 1
+  size: 9, 18
+  orig: 9, 18
   offset: 0, 0
   index: -1

@@ -70,9 +70,12 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
 
         joinLabel.setAlignment(Align.center);
 
-        ScrollTable.add(searchIcon).width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
-        ScrollTable.add(searchInput).width(Gdx.graphics.getWidth()*0.7f).height(Gdx.graphics.getHeight()*0.1f);
-        ScrollTable.row();
+        // Sin mecanica de busqueda aun
+
+        //ScrollTable.add(searchIcon).width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
+        //ScrollTable.add(searchInput).width(Gdx.graphics.getWidth()*0.7f).height(Gdx.graphics.getHeight()*0.1f);
+        //ScrollTable.row();
+
         ScrollTable.add(joinIcon).width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
         ScrollTable.add(joinLabel).width(Gdx.graphics.getWidth()*0.7f).height(Gdx.graphics.getHeight()*0.1f);
         ScrollTable.row();
@@ -162,15 +165,14 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                                 Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang);
                                 selected_group = grupo;
-                                g.setScreen(new ConfigGameScreen(g,userInfo,selected_group));
+                                g.setScreen(new MenuGameScreen(g,userInfo,selected_group));
                                 Gdx.app.log("probando grupo", grupo.getName());
                                 // Llamada a nueva screen con la info del grupo
 
                                 return true;
                             }
                         });
-                        ScrollTable.add();
-                        ScrollTable.add(tmpTButton).width(Gdx.graphics.getWidth() * 0.7f).height(Gdx.graphics.getHeight() * 0.15f);
+                        ScrollTable.add(tmpTButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.15f).colspan(2);
                         ScrollTable.row();
                     }
                     /*Gdx.app.log("conexion", "tabla creada");
@@ -186,6 +188,16 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                 } else {
                     Gdx.app.log("conexion", "ningun resultado");
                 }
+
+                TextButton backButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
+                backButton.addListener(new InputListener(){
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                        g.setScreen(new LoginScreen(g));
+                        return true;
+                    }
+                });
+                ScrollTable.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);
+
                 Gdx.app.log("conexion", "tabla creada");
                 ScrollPane scroller = new ScrollPane(ScrollTable);
                 Gdx.app.log("conexion", "scroll creado");
