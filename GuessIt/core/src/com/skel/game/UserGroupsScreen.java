@@ -17,6 +17,7 @@ import com.skel.util.Group;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -145,7 +146,8 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
-        final String Response = httpResponse.getResultAsString();
+        final String ResponseBefore = httpResponse.getResultAsString();
+        final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

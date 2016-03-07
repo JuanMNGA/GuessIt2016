@@ -16,7 +16,9 @@ import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.*;
+import sun.io.ByteToCharUTF8;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -366,7 +368,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
-        final String Response = httpResponse.getResultAsString();
+        final String ResponseBefore = httpResponse.getResultAsString();
+        final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
         Gdx.app.log("conexion",Response);
         if(inRate){
             Gdx.app.postRunnable(new Runnable() {

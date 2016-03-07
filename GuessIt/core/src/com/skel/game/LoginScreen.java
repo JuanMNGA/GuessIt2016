@@ -15,6 +15,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 
 /**
@@ -102,8 +103,8 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                         // Conexion http
                         HashMap<String, String> parameters = new HashMap<String, String>();
-                        parameters.put("usuario",userLogin.getText());
-                        parameters.put("password",userPass.getText());
+                        parameters.put("usuario",new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("password",new String(userPass.getText().getBytes(), Charset.forName("UTF-8")));
                         String url = Utils.getUrl()+"login.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";
                         httpsolicitud = new Net.HttpRequest(httpMethod);
@@ -172,7 +173,8 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
-        final String Response = httpResponse.getResultAsString();
+        final String ResponseBefore = httpResponse.getResultAsString();
+        final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

@@ -12,6 +12,7 @@ import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Utils;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -113,11 +114,11 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                 new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                         HashMap<String, String> parameters = new HashMap<String, String>();
-                        parameters.put("nombre", userName.getText());
-                        parameters.put("apellidos", userLastname.getText());
-                        parameters.put("email", userEmail.getText());
-                        parameters.put("usuario",userLogin.getText());
-                        parameters.put("password",userPass.getText());
+                        parameters.put("nombre", new String(userName.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("apellidos", new String(userLastname.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("email", new String(userEmail.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("usuario",new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("password",new String(userPass.getText().getBytes(), Charset.forName("UTF-8")));
                         parameters.put("alta",dFormat.format(new Date(TimeUtils.millis())));
                         String url = Utils.getUrl()+"register.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";
@@ -243,7 +244,8 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
-        final String Response = httpResponse.getResultAsString();
+        final String ResponseBefore = httpResponse.getResultAsString();
+        final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {

@@ -19,6 +19,7 @@ import com.skel.util.Group;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
+import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.StringTokenizer;
 
@@ -81,7 +82,8 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
-        final String Response = httpResponse.getResultAsString();
+        final String ResponseBefore = httpResponse.getResultAsString();
+        final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
         if(groupIsSelected){
             Gdx.app.postRunnable(new Runnable() {
                 @Override
@@ -96,7 +98,7 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
                     if (!Response.isEmpty()) {
                         StringTokenizer stroker = new StringTokenizer(Response, ";");
                         while (stroker.hasMoreElements()) {
-                            TextButton tmpTButton = new TextButton("", skin.get("group", TextButton.TextButtonStyle.class));
+                            final TextButton tmpTButton = new TextButton("", skin.get("group", TextButton.TextButtonStyle.class));
                             final int iGroupId = Integer.parseInt(stroker.nextElement().toString());
                             final String groupName = stroker.nextElement().toString();
                             final String teacherName = stroker.nextElement().toString();
@@ -110,6 +112,7 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
                                     Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang);
                                     selected_group = grupo;
                                     groupIsSelected = true;
+                                    tmpTButton.setVisible(false);
                                     sendGroupInvite(grupo);
                                     return true;
                                 }

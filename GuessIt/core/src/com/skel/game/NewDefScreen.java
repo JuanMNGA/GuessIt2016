@@ -19,6 +19,7 @@ import com.skel.util.Group;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -67,10 +68,10 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
     public void sendDefinition(){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("nivel", String.valueOf(actualLevel));
-        parameters.put("palabra", word.getText());
-        parameters.put("articulo", article.getText());
-        parameters.put("frase", sentence.getText());
-        parameters.put("pista", hint.getText());
+        parameters.put("palabra", new String(word.getText().getBytes(), Charset.forName("UTF-8")));
+        parameters.put("articulo", new String(article.getText().getBytes(), Charset.forName("UTF-8")));
+        parameters.put("frase", new String(sentence.getText().getBytes(), Charset.forName("UTF-8")));
+        parameters.put("pista", new String(hint.getText().getBytes(), Charset.forName("UTF-8")));
         parameters.put("id_categoria", String.valueOf(actualCategory));
         parameters.put("id_usuario", String.valueOf(userInfo.getId()));
         parameters.put("id_aula",String.valueOf(grupo.getId()));
@@ -184,7 +185,8 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
-        final String Response = httpResponse.getResultAsString();
+        final String ResponseBefore = httpResponse.getResultAsString();
+        final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
         if(sendingDefinition){
             userInfo.addedNewDef();
             sendingDefinition = false;
