@@ -109,7 +109,7 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
                             // Añadir el funcionamiento de cada boton
                             tmpTButton.addListener(new InputListener() {
                                 public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                                    Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang);
+                                    Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang, "");
                                     selected_group = grupo;
                                     groupIsSelected = true;
                                     tmpTButton.setVisible(false);

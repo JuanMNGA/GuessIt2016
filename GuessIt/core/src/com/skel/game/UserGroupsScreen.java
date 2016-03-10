@@ -159,13 +159,14 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                         final String groupName = stroker.nextElement().toString();
                         final String teacherName = stroker.nextElement().toString();
                         final int iGroupLang = Integer.parseInt(stroker.nextElement().toString());
+                        final String sGroupLang = stroker.nextToken();
                         tmpTButton.setText(groupName + " - " + teacherName);
                         tmpTButton.getLabel().setAlignment(Align.center);
                         tmpTButton.getLabel().setWrap(true);
                         // Añadir el funcionamiento de cada boton
                         tmpTButton.addListener(new InputListener() {
                             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                                Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang);
+                                Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang, sGroupLang);
                                 selected_group = grupo;
                                 g.setScreen(new MenuGameScreen(g,userInfo,selected_group));
                                 Gdx.app.log("probando grupo", grupo.getName());
@@ -199,7 +200,17 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                     }
                 });
                 ScrollTable.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);
-
+                ScrollTable.row();
+                TextButton refreshButton = new TextButton("Refresh", skin.get("default", TextButton.TextButtonStyle.class));
+                refreshButton.addListener(new InputListener(){
+                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                        g.setScreen(new UserGroupsScreen(g,userInfo));
+                        return true;
+                    }
+                });
+                ScrollTable.add(refreshButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);
+                ScrollTable.row();
+                ScrollTable.pack();
                 Gdx.app.log("conexion", "tabla creada");
                 ScrollPane scroller = new ScrollPane(ScrollTable);
                 Gdx.app.log("conexion", "scroll creado");

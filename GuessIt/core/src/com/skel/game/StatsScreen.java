@@ -14,6 +14,7 @@ import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
+import com.skel.util.Strings_I18N;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
@@ -35,6 +36,8 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
 
     private Group grupo;
 
+    private Strings_I18N locale;
+
     Net.HttpRequest httpsolicitud;
     String httpMethod = Net.HttpMethods.POST;
 
@@ -43,7 +46,7 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
     Label defPlayedLabel, numDefPlayedLabel, successesPlayedLabel, numSuccessesPlayedLabel, avgRatingPlayedLabel, numAvgRatingPlayedLabel, catMostPlayedLabel, stringCatMostPlayedLabel;
 
     public void createStageActors(){
-        defPlayedLabel = new Label("Definitions played", skin.get("default", Label.LabelStyle.class));
+        defPlayedLabel = new Label(locale.defPlayed(), skin.get("default", Label.LabelStyle.class));
         defPlayedLabel.setWrap(true);
         defPlayedLabel.setAlignment(Align.center);
 
@@ -51,7 +54,7 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
         numDefPlayedLabel.setWrap(true);
         numDefPlayedLabel.setAlignment(Align.center);
 
-        successesPlayedLabel = new Label("Successes", skin.get("default", Label.LabelStyle.class));
+        successesPlayedLabel = new Label(locale.sucPlayed(), skin.get("default", Label.LabelStyle.class));
         successesPlayedLabel.setWrap(true);
         successesPlayedLabel.setAlignment(Align.center);
 
@@ -59,7 +62,7 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
         numSuccessesPlayedLabel.setWrap(true);
         numSuccessesPlayedLabel.setAlignment(Align.center);
 
-        avgRatingPlayedLabel = new Label("Average Definitions Rating", skin.get("default", Label.LabelStyle.class));
+        avgRatingPlayedLabel = new Label(locale.avgRated(), skin.get("default", Label.LabelStyle.class));
         avgRatingPlayedLabel.setWrap(true);
         avgRatingPlayedLabel.setAlignment(Align.center);
 
@@ -67,7 +70,7 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
         numAvgRatingPlayedLabel.setWrap(true);
         numAvgRatingPlayedLabel.setAlignment(Align.center);
 
-        catMostPlayedLabel = new Label("Most played category", skin.get("default", Label.LabelStyle.class));
+        catMostPlayedLabel = new Label(locale.mostCategory(), skin.get("default", Label.LabelStyle.class));
         catMostPlayedLabel.setAlignment(Align.center);
         catMostPlayedLabel.setWrap(true);
 
@@ -75,7 +78,7 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
         stringCatMostPlayedLabel.setWrap(true);
         stringCatMostPlayedLabel.setAlignment(Align.center);
 
-        Label reportedDefLabel = new Label("Reported definitions", skin.get("default", Label.LabelStyle.class));
+        Label reportedDefLabel = new Label(locale.reportedDef(), skin.get("default", Label.LabelStyle.class));
         reportedDefLabel.setAlignment(Align.center);
         reportedDefLabel.setWrap(true);
 
@@ -116,6 +119,8 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
         userInfo = UInfo;
         this.grupo = group;
 
+        locale = new Strings_I18N(grupo.getLanguageName());
+
         create();
     }
 
@@ -145,13 +150,14 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
                         numAvgRatingPlayedLabel.setText(stroker.nextToken());
                         stringCatMostPlayedLabel.setText(stroker.nextToken());
                         while(stroker.hasMoreElements()){
-                            scroll_table.add(new Label(stroker.nextToken(), skin.get("default", Label.LabelStyle.class))).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);
+                            scroll_table.add(new Label(stroker.nextToken(), skin.get("default", Label.LabelStyle.class))).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.1f);
+                            scroll_table.add(new Label(stroker.nextToken(), skin.get("default", Label.LabelStyle.class))).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.1f);
                             scroll_table.row();
                         }
                     }
                 }
 
-                TextButton backButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
+                TextButton backButton = new TextButton(locale.back(), skin.get("default", TextButton.TextButtonStyle.class));
                 backButton.addListener(new InputListener(){
                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                        g.setScreen(new MenuGameScreen(g, userInfo, grupo));

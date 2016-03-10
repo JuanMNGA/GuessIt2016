@@ -1,29 +1,24 @@
 package com.skel.game;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.net.HttpParametersUtils;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.*;
-import sun.io.ByteToCharUTF8;
 
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.StringTokenizer;
+import java.util.*;
 
 /**
  * Created by juanm on 24/02/2016.
@@ -37,6 +32,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
     private Skin sec_Skin = Utils.createResultSkin();
 
     private Group grupo;
+
+    private Strings_I18N locale;
 
     Net.HttpRequest httpsolicitud;
     String httpMethod = Net.HttpMethods.POST;
@@ -58,15 +55,33 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
     private int acierto = 0;
     private int pista = 0;
     private int reporte = 0;
-    private int puntuacion = 0;
+    private int puntuacion = 1;
+    private String defToSave;
 
     // Actores
-    Label definitionLabel, answerLabel, hintLabel, tryLabel;
+    Label definitionLabel, answerLabel, hintLabel, tryLabel, articleLabel;
     TextField answerText;
+
+    private CheckBox questOne, questTwo;
+
+    private String questionOne, questionTwo, reportReason;
+
+    private void setQuestions(){
+        int previousResult = 0;
+        previousResult = new Random().nextInt(locale.getQuestions().size());
+        questionOne = locale.getQuestions().get(previousResult);
+
+        int newQuest = new Random().nextInt(locale.getQuestions().size());
+        while(newQuest == previousResult){
+            newQuest = new Random().nextInt(locale.getQuestions().size());
+        }
+
+        questionTwo = locale.getQuestions().get(newQuest);
+    }
 
     public void createStageActors(){
         // Window
-        final Window rateWindow = new Window("Rate this definition", skin.get("default", Window.WindowStyle.class));
+        final Window rateWindow = new Window(locale.rate(), skin.get("default", Window.WindowStyle.class));
         rateWindow.setMovable(false);
         rateWindow.setFillParent(true);
         rateWindow.padTop(Gdx.graphics.getHeight()*0.05f);
@@ -76,7 +91,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         rateWindow.setVisible(false);
         // Add window actors
         // Final Round Window
-        final Window pointWindow = new Window("Round stats", skin.get("default", Window.WindowStyle.class));
+        final Window pointWindow = new Window(locale.round(), skin.get("default", Window.WindowStyle.class));
         pointWindow.setMovable(false);
         pointWindow.setFillParent(true);
         pointWindow.padTop(Gdx.graphics.getHeight()*0.05f);
@@ -85,6 +100,16 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         pointWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         pointWindow.setVisible(false);
 
+        //Add reports reason window
+        final Window reportReasonWindow = new Window("Select report's reason", skin.get("default", Window.WindowStyle.class));
+        reportReasonWindow.setMovable(false);
+        reportReasonWindow.setFillParent(true);
+        reportReasonWindow.padTop(Gdx.graphics.getHeight()*0.05f);
+        reportReasonWindow.getTitleLabel().setAlignment(Align.center);
+        reportReasonWindow.getTitleLabel().setWrap(true);
+        reportReasonWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        reportReasonWindow.setVisible(false);
+
         // Add window actors
         // Label
         final Label finalPoints = new Label("", skin.get("point", Label.LabelStyle.class));
@@ -92,54 +117,58 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         finalPoints.setWrap(true);
         // Create actors
         // Labels
-        final Label numberStarsLabel = new Label("0 Stars",skin.get("default", Label.LabelStyle.class));
-        numberStarsLabel.setWrap(true);
-        numberStarsLabel.setAlignment(Align.center);
-        Label orLabel = new Label("OR", skin.get("default", Label.LabelStyle.class));
-        orLabel.setAlignment(Align.center);
-        orLabel.setWrap(true);
 
         final Label resultDefLabel = new Label("", sec_Skin.get("result", Label.LabelStyle.class));
         resultDefLabel.setWrap(true);
 
+        setQuestions();
+
+        questOne = new CheckBox(questionOne, skin.get("questions", CheckBox.CheckBoxStyle.class));
+        questOne.getLabel().setAlignment(Align.center);
+        questOne.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if(questOne.isChecked()){
+                    puntuacion++;
+                    reportReason = "";
+                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
+                }else{
+                    puntuacion--;
+                    reportReason = "";
+                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
+                }
+                reportReason = "";
+            }
+        });
+        questTwo = new CheckBox(questionTwo, skin.get("questions", CheckBox.CheckBoxStyle.class));
+        questTwo.getLabel().setAlignment(Align.center);
+        questTwo.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if(questTwo.isChecked()){
+                    puntuacion++;
+                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
+                }else{
+                    puntuacion--;
+                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
+                }
+                reportReason = "";
+            }
+        });
+
         // Buttons
-        TextButton oneStar = new TextButton("1",skin.get("point", TextButton.TextButtonStyle.class));
-        TextButton twoStar = new TextButton("2",skin.get("point", TextButton.TextButtonStyle.class));
-        TextButton threeStar = new TextButton("3",skin.get("point", TextButton.TextButtonStyle.class));
         TextButton reportButton = new TextButton("",skin.get("report", TextButton.TextButtonStyle.class));
-        oneStar.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                numberStarsLabel.setText("1 Star");
-                puntuacion = 1;
-                reporte = 0;
-                return true;
-            }
-        });
-        twoStar.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                numberStarsLabel.setText("2 Stars");
-                puntuacion = 2;
-                reporte = 0;
-                return true;
-            }
-        });
-        threeStar.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                numberStarsLabel.setText("3 Stars");
-                puntuacion = 3;
-                reporte = 0;
-                return true;
-            }
-        });
         reportButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                numberStarsLabel.setText("Reported");
                 reporte = 1;
-                puntuacion = 0;
+                questOne.setChecked(false);
+                questTwo.setChecked(false);
+                rateWindow.setVisible(false);
+                reportReasonWindow.setVisible(true);
                 return true;
             }
         });
-        TextButton sendButton = new TextButton("Send!",skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton sendButton = new TextButton(locale.send(),skin.get("default", TextButton.TextButtonStyle.class));
         sendButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 Gdx.app.log("puntuacion","enviada");
@@ -148,7 +177,10 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     userInfo.addDefPlayed();
                 sendRate();
                 numIntentos = 3;
-                tryLabel.setText("Chances: " + String.valueOf(numIntentos));
+                tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
+                questOne.setChecked(false);
+                questTwo.setChecked(false);
+                reportReason = "";
                 // Añadimos un punto al marcador oculto para permitir introducir nuevas definiciones.
                 if(engine.endRound()){
                     // Change to final rate screen
@@ -157,30 +189,35 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                 return true;
             }
         });
+        TextButton saveButton = new TextButton(locale.save(),skin.get("default", TextButton.TextButtonStyle.class));
+        saveButton.addListener(new InputListener() {
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                Preferences tmpPrefs = Gdx.app.getPreferences("notebook");
+                tmpPrefs.putString(defToSave,"");
+                tmpPrefs.flush();
+                return true;
+            }
+        });
         rateWindow.add(resultDefLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(5);
         rateWindow.row();
-        rateWindow.add(oneStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add(twoStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add(threeStar).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add(questOne).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
         rateWindow.row();
-        rateWindow.add(numberStarsLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
+        rateWindow.add(questTwo).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
         rateWindow.row();
-        //rateWindow.add(orLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
-        //rateWindow.row();
+        // Preguntas label aqui
         rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.add(reportButton).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.row();
-        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.15f).colspan(5);
+        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f).colspan(2);
+        rateWindow.add(saveButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f).colspan(2);
         rateWindow.row();
         rateWindow.pack();
 
         // TextButtons
-        TextButton newRound = new TextButton("New Round!", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton newRound = new TextButton(locale.newRound(), skin.get("default", TextButton.TextButtonStyle.class));
 
         newRound.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
@@ -189,7 +226,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
             }
         });
 
-        TextButton backMenu = new TextButton("Back to menu", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton backMenu = new TextButton(locale.backMenu(), skin.get("default", TextButton.TextButtonStyle.class));
         backMenu.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new MenuGameScreen(g,userInfo, grupo));
@@ -203,6 +240,55 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         pointWindow.row();
         pointWindow.add(backMenu).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
         pointWindow.row();
+        pointWindow.pack();
+
+        // reportReasonWindow Actors
+        TextButton wContent = new TextButton("Wrong content", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton offensive = new TextButton("Offensive", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton lMistakes = new TextButton("Linguistic mistakes", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton difficult = new TextButton("Difficult", skin.get("default", TextButton.TextButtonStyle.class));
+        wContent.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                reportReason = "Wrong content";
+                reportReasonWindow.setVisible(false);
+                rateWindow.setVisible(true);
+                return true;
+            }
+        });
+        offensive.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                reportReason = "Offensive";
+                reportReasonWindow.setVisible(false);
+                rateWindow.setVisible(true);
+                return true;
+            }
+        });
+        lMistakes.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                reportReason = "Linguistic mistakes";
+                reportReasonWindow.setVisible(false);
+                rateWindow.setVisible(true);
+                return true;
+            }
+        });
+        difficult.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                reportReason = "Difficult";
+                reportReasonWindow.setVisible(false);
+                rateWindow.setVisible(true);
+                return true;
+            }
+        });
+
+        reportReasonWindow.add(wContent).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        reportReasonWindow.row();
+        reportReasonWindow.add(offensive).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        reportReasonWindow.row();
+        reportReasonWindow.add(lMistakes).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        reportReasonWindow.row();
+        reportReasonWindow.add(difficult).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        reportReasonWindow.row();
+        reportReasonWindow.pack();
 
         // Main Game Actors
         definitionLabel = new Label("",skin.get("default", Label.LabelStyle.class));
@@ -211,20 +297,24 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         layoutTable.add(definitionLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(3);
         layoutTable.row();
 
-        answerLabel = new Label("Answer:", skin.get("default", Label.LabelStyle.class));
+        answerLabel = new Label(locale.answer(), skin.get("default", Label.LabelStyle.class));
         answerLabel.setAlignment(Align.center);
         answerLabel.setWrap(true);
 
         layoutTable.add(answerLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(3);
         layoutTable.row();
 
+        articleLabel = new Label("", skin.get("default", Label.LabelStyle.class));
+        articleLabel.setAlignment(Align.center);
+
         answerText = new TextField("", skin.get("default", TextField.TextFieldStyle.class));
         answerText.setAlignment(Align.center);
 
-        layoutTable.add(answerText).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(3);
+        layoutTable.add(articleLabel).width(Gdx.graphics.getWidth()*0.3f).height(Gdx.graphics.getHeight()*0.1f);
+        layoutTable.add(answerText).width(Gdx.graphics.getWidth()*0.45f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);
         layoutTable.row();
 
-        TextButton guessButton = new TextButton("Guess",skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton guessButton = new TextButton(locale.guess(),skin.get("default", TextButton.TextButtonStyle.class));
         // Button stuff
         guessButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
@@ -237,14 +327,17 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     Gdx.app.log("abrir ventana","rate abierta");
                     resultDefLabel.setText(engine.getPassPhrase());
                     definitionToSend = engine.getDefinition();
+                    defToSave = definitionToSend.getPalabra();
                     // Nueva palabra
                     engine.nextDefinition();
                     if(!engine.endRound()) {
                         definitionLabel.setText(engine.getPhrase());
                         hintLabel.setText(engine.getHint());
                         hintLabel.setVisible(false);
+                        articleLabel.setText(engine.getArticle());
                         answerText.setText("");
                         answerText.setColor(Color.LIGHT_GRAY);
+                        setQuestions();
                     }else{
                         finalPoints.setText(engine.getResultPoints());
                         pointWindow.setVisible(true);
@@ -253,12 +346,13 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     Gdx.app.log("comparacion","fallo");
                     answerText.setColor(Color.RED);
                     numIntentos--;
-                    tryLabel.setText("Chances: " + String.valueOf(numIntentos));
+                    tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
                     if(numIntentos == 0){
                         acierto = 0;
                         rateWindow.setVisible(true);
                         resultDefLabel.setText(engine.getWrongPhrase());
                         definitionToSend = engine.getDefinition();
+                        defToSave = definitionToSend.getPalabra();
                         // Nueva palabra
                         engine.nextDefinition();
                         if(!engine.endRound()) {
@@ -279,7 +373,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         layoutTable.add(guessButton).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.1f);
         layoutTable.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
 
-        TextButton hintButton = new TextButton("Hint", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton hintButton = new TextButton(locale.hint(), skin.get("default", TextButton.TextButtonStyle.class));
         // Button stuff
         hintButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
@@ -300,7 +394,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         layoutTable.add(hintLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(3);
         layoutTable.row();
 
-        tryLabel = new Label("Chances: ", skin.get("default", Label.LabelStyle.class));
+        tryLabel = new Label(locale.chances() + " ", skin.get("default", Label.LabelStyle.class));
         tryLabel.setWrap(true);
         tryLabel.setAlignment(Align.center);
         layoutTable.add(tryLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(3);
@@ -311,6 +405,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         stage.addActor(layoutTable);
         stage.addActor(rateWindow);
         stage.addActor(pointWindow);
+        stage.addActor(reportReasonWindow);
     }
 
     public void create(){
@@ -327,6 +422,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         this.selectedLv = selectedLv;
         this.categorias = categorias;
         this.grupo = grupo;
+        locale = new Strings_I18N(grupo.getLanguageName());
+
         getDefinitions();
         create();
     }
@@ -358,6 +455,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         parameters.put("pista", String.valueOf(pista));
         parameters.put("intentos", String.valueOf(3-numIntentos));
         parameters.put("reporte", String.valueOf(reporte));
+        parameters.put("motivo", new String(reportReason.getBytes(), Charset.forName("UTF-8")));
         parameters.put("fecha",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(TimeUtils.millis())));
         String url = Utils.getUrl()+"sendRate.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
@@ -378,7 +476,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     acierto = 0;
                     pista = 0;
                     reporte = 0;
-                    puntuacion = 0;
+                    puntuacion = 1;
                     inRate = false;
                 }
             });
@@ -404,7 +502,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                         tmpEngine.setDefinitions(game_definitions);
                         engine = tmpEngine;
                         definitionLabel.setText(engine.getPhrase());
-                        tryLabel.setText("Chances: " + String.valueOf(numIntentos));
+                        articleLabel.setText(engine.getArticle());
+                        tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
                     }
                 });
             }else{

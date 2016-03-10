@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
+import com.skel.util.Strings_I18N;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
@@ -21,15 +22,16 @@ import com.skel.util.Utils;
 public class MenuGameScreen implements Screen {
     private Stage stage;
     private Skin skin;
+    private Strings_I18N locale;
     Game g;
     UserInfo userInfo;
     Group grupo;
 
     public void createStageActors(){
-        TextButton playButton = new TextButton("Play!", skin.get("default", TextButton.TextButtonStyle.class));
-        TextButton statsButton = new TextButton("Stats", skin.get("default", TextButton.TextButtonStyle.class));
-        TextButton backButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
-        TextButton newDefButton = new TextButton("Add a definition!", skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton playButton = new TextButton(locale.play(), skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton statsButton = new TextButton(locale.stats(), skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton backButton = new TextButton(locale.back(), skin.get("default", TextButton.TextButtonStyle.class));
+        TextButton newDefButton = new TextButton(locale.addDef(), skin.get("default", TextButton.TextButtonStyle.class));
 
         if(userInfo.canAddDefinition()){
             newDefButton.setVisible(true);
@@ -95,6 +97,7 @@ public class MenuGameScreen implements Screen {
         this.g = g;
         userInfo = UInfo;
         this.grupo = grupo;
+        locale = new Strings_I18N(grupo.getLanguageName());
         create();
     }
     @Override

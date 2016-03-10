@@ -78,10 +78,10 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
 
         //Text Fields
         userLogin.setAlignment(Align.center);
-        userLogin.setMessageText("User");
+        //userLogin.setMessageText("User");
 
         userPass.setPasswordMode(true);
-        userPass.setMessageText("Password");
+        //userPass.setMessageText("Password");
         userPass.setAlignment(Align.center);
         userPass.setPasswordCharacter('*');
 

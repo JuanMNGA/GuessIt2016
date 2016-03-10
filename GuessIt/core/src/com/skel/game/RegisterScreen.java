@@ -114,11 +114,11 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                 new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                         HashMap<String, String> parameters = new HashMap<String, String>();
-                        parameters.put("nombre", new String(userName.getText().getBytes(), Charset.forName("UTF-8")));
-                        parameters.put("apellidos", new String(userLastname.getText().getBytes(), Charset.forName("UTF-8")));
-                        parameters.put("email", new String(userEmail.getText().getBytes(), Charset.forName("UTF-8")));
-                        parameters.put("usuario",new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
-                        parameters.put("password",new String(userPass.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("nombre", userName.getText());//new String(userName.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("apellidos", userLastname.getText());//new String(userLastname.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("email", userEmail.getText());//new String(userEmail.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("usuario", userLogin.getText());//new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
+                        parameters.put("password", userPass.getText());//new String(userPass.getText().getBytes(), Charset.forName("UTF-8")));
                         parameters.put("alta",dFormat.format(new Date(TimeUtils.millis())));
                         String url = Utils.getUrl()+"register.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";

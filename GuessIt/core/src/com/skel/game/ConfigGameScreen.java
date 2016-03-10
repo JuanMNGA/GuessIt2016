@@ -15,6 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
+import com.skel.util.Strings_I18N;
 import com.skel.util.UserInfo;
 import com.skel.util.Utils;
 
@@ -34,6 +35,8 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
 
     private Group grupo;
 
+    private Strings_I18N locale;
+
     Net.HttpRequest httpsolicitud;
     String httpMethod = Net.HttpMethods.POST;
 
@@ -48,6 +51,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
         this.g = g;
         userInfo = UInfo;
         this.grupo = grupo;
+        locale = new Strings_I18N(grupo.getLanguageName());
         // Hacer la transformacion del idioma de la interfaz dependiendo de grupo.getLanguage();
         create();
     }
@@ -64,7 +68,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
 
     public void createStageActors(){
         // Label Select Level
-        Label selectLevelLabel = new Label("Select level:",skin.get("default",Label.LabelStyle.class));
+        Label selectLevelLabel = new Label(locale.selLevel(),skin.get("default",Label.LabelStyle.class));
         selectLevelLabel.setAlignment(Align.center);
         selectLevelLabel.setWrap(true);
 
@@ -119,7 +123,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
         levelButtonGroup.setUncheckLast(true);
 
         // Label Select Category
-        Label selectCategoryLabel = new Label("Select category:",skin.get("default",Label.LabelStyle.class));
+        Label selectCategoryLabel = new Label(locale.selCategory(),skin.get("default",Label.LabelStyle.class));
         selectCategoryLabel.setAlignment(Align.center);
         selectCategoryLabel.setWrap(true);
 
@@ -174,7 +178,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
                     scrollTable.add(tmpCheck).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f).colspan(7);
                     scrollTable.row();
                 }
-                TextButton playButton = new TextButton("Play!", skin.get("default", TextButton.TextButtonStyle.class));
+                TextButton playButton = new TextButton(locale.play(), skin.get("default", TextButton.TextButtonStyle.class));
 
                 playButton.addListener(new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
@@ -186,7 +190,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
                     }
                 });
 
-                TextButton backButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
+                TextButton backButton = new TextButton(locale.back(), skin.get("default", TextButton.TextButtonStyle.class));
 
                 backButton.addListener(new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
@@ -201,9 +205,11 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
                 scrollTable.add(backButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f).colspan(7);
                 scrollTable.row();
 
+                ScrollPane scroller = new ScrollPane(scrollTable);
+
                 final Table table = new Table();
                 table.setFillParent(true);
-                table.add(scrollTable).fill().expand();
+                table.add(scroller).fill().expand();
                 stage.addActor(table);
             }
         });

@@ -115,6 +115,13 @@ public class Utils {
         cbStyle.font = tmpSkin.getFont("default");
         cbStyle.fontColor = Color.BLACK;
         tmpSkin.add("default",cbStyle);
+        // Another Check Style
+        cbStyle = new CheckBox.CheckBoxStyle();
+        cbStyle.checkboxOff = new TextureRegionDrawable(tmpSkin.getRegion("uncheck"));
+        cbStyle.checkboxOn = new TextureRegionDrawable(tmpSkin.getRegion("check"));
+        cbStyle.font = tmpSkin.getFont("group");
+        cbStyle.fontColor = Color.BLACK;
+        tmpSkin.add("questions",cbStyle);
         //Window Style
         Window.WindowStyle wStyle = new Window.WindowStyle();
         wStyle.titleFont = tmpSkin.getFont("default");
@@ -138,7 +145,8 @@ public class Utils {
     }
 
     public static String getUrl(){
-        return "http://192.168.1.107/GuessIt/game/";
-        //return "http://localhost/GuessIt/game/";
+        //return "http://192.168.1.107/GuessIt/game/";
+        return "http://localhost/GuessIt/game/";
+
     }
 }

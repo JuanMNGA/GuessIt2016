@@ -55,6 +55,8 @@ public class GEngine {
         return engine_definitions.get(current_def).getPista();
     }
 
+    public String getArticle() {return engine_definitions.get(current_def).getArticulo(); }
+
     public boolean endRound(){
         return current_def==max_def;
     }

@@ -4,7 +4,7 @@
 			or die('No se pudo conectar: ' . mysql_error());
 		
 		mysql_select_db('guessit') or die('No se pudo seleccionar la base de datos');
-		//mysql_query ( "SET NAMES 'utf8'" );
+		mysql_query ( "SET NAMES 'utf8'" );
 		$id_aula = $_POST['id_aula'];
 		$sql = "SELECT id, nombre FROM categoria WHERE id_aula = '".$id_aula."'";
 		

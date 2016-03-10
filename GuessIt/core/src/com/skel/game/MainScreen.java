@@ -26,6 +26,7 @@ public class MainScreen implements Screen {
 	TextButton newGameButton;
 	TextButton aboutButton;
 	TextButton registerButton;
+	TextButton notebookButton;
 	Label lab;
 
 	public MainScreen(Game g){
@@ -42,6 +43,7 @@ public class MainScreen implements Screen {
 		newGameButton = new TextButton("Login",skin);
 		aboutButton = new TextButton("Credits",skin);
 		registerButton = new TextButton("Register",skin);
+		notebookButton = new TextButton("Notebook", skin.get("default", TextButton.TextButtonStyle.class));
 		lab = new Label("GuessIt! Language Trainer",skin.get("default", Label.LabelStyle.class)); //Tomar como ejemplo para seleccionar skins diferentes.
 
 		// Posicionamiento
@@ -50,6 +52,8 @@ public class MainScreen implements Screen {
 		registerButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.4f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
 		aboutButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.3f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+
+		notebookButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.2f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
 		lab.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.8f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
@@ -73,10 +77,18 @@ public class MainScreen implements Screen {
 			}
 		});
 
+		notebookButton.addListener(new InputListener(){
+			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+				g.setScreen(new NoteBookScreen(g));
+				return true;
+			}
+		});
+
 		// Anadir al stage
 		stage.addActor(aboutButton);
 		stage.addActor(newGameButton);
 		stage.addActor(registerButton);
+		stage.addActor(notebookButton);
 		stage.addActor(lab);
 	}
 

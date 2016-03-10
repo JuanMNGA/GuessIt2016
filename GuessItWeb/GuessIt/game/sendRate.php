@@ -12,8 +12,9 @@
 		$pista = $_POST['pista'];
 		$intentos = $_POST['intentos'];
 		$reporte = $_POST['reporte'];
+		$motivo = $_POST['motivo'];
 		$fecha = $_POST['fecha'];
-		$sql = "INSERT INTO puntuaciones(id_usuario,id_palabra,puntuacion,acierto,pista,intentos,reporte,fecha) VALUES('$id_usuario','$id_palabra','$puntuacion','$acierto','$pista','$intentos','$reporte','$fecha')";
+		$sql = "INSERT INTO puntuaciones(id_usuario,id_palabra,puntuacion,acierto,pista,intentos,reporte,motivo,fecha) VALUES('$id_usuario','$id_palabra','$puntuacion','$acierto','$pista','$intentos','$reporte','$motivo','$fecha')";
 		
 		$result = mysql_query($sql);
 		mysql_close($link);

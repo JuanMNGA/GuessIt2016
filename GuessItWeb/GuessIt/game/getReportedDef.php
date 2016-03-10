@@ -34,12 +34,12 @@
 		
 		$string_result .= $categoria['categoria'].";";
 		
-		$sql = "SELECT definiciones.palabra as palabra FROM definiciones,puntuaciones WHERE puntuaciones.reporte = 1 AND puntuaciones.id_palabra = definiciones.id AND definiciones.id_usuario = ".$id_usuario." AND definiciones.id_aula = ".$id_aula;
+		$sql = "SELECT definiciones.palabra as palabra, puntuaciones.motivo AS motivo FROM definiciones,puntuaciones WHERE puntuaciones.reporte = 1 AND puntuaciones.id_palabra = definiciones.id AND definiciones.id_usuario = ".$id_usuario." AND definiciones.id_aula = ".$id_aula;
 		$res = mysql_query($sql);
 		
 		if(count($res) > 0){
 			while($row = mysql_fetch_assoc($res)){
-				$string_result .= $row['palabra'].";";
+				$string_result .= $row['palabra'].";".$row['motivo'].";";
 			}
 		}
 		
