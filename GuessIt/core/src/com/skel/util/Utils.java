@@ -1,5 +1,6 @@
 package com.skel.util;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
@@ -14,7 +15,11 @@ import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
  */
 public class Utils {
 
-    public static BitmapFont CreateFont(int size, Color color){
+    public Utils(){
+
+    }
+
+    public BitmapFont CreateFont(int size, Color color){
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;
@@ -27,7 +32,7 @@ public class Utils {
         return tmpFont;
     }
 
-    public static BitmapFont CreateResultFont(int size){
+    public BitmapFont CreateResultFont(int size){
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/arial.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = size;
@@ -39,14 +44,23 @@ public class Utils {
         return tmpFont;
     }
 
-    public static Skin createBasicSkin(){
+    public Skin createBasicSkin(){
         TextureAtlas basic_atlas = new TextureAtlas(Gdx.files.internal("images_packed/basic.atlas"));
         Skin tmpSkin = new Skin();
         //Add font
-        tmpSkin.add("default",CreateFont(30, Color.WHITE));
-        tmpSkin.add("label",CreateFont(24, Color.BLACK));
-        tmpSkin.add("group",CreateFont(18, Color.WHITE));
-        tmpSkin.add("point",CreateFont(40, Color.BLACK));
+        if(Gdx.app.getType() == Application.ApplicationType.Android) {
+            tmpSkin.add("default", CreateFont((int) (30 * Gdx.graphics.getDensity()), Color.WHITE));
+            tmpSkin.add("label", CreateFont((int) (30 * Gdx.graphics.getDensity()), Color.BLACK));
+            tmpSkin.add("group", CreateFont((int) (20 * Gdx.graphics.getDensity()), Color.WHITE));
+            tmpSkin.add("point", CreateFont((int) (30 * Gdx.graphics.getDensity()), Color.BLACK));
+        }else{
+            if(Gdx.app.getType() == Application.ApplicationType.Desktop){
+                tmpSkin.add("default", CreateFont(30 , Color.WHITE));
+                tmpSkin.add("label", CreateFont(30 , Color.BLACK));
+                tmpSkin.add("group", CreateFont(20 , Color.WHITE));
+                tmpSkin.add("point", CreateFont(30 , Color.BLACK));
+            }
+        }
         tmpSkin.addRegions(basic_atlas);
         //TextButton Style
         TextButton.TextButtonStyle tbStyle = new TextButton.TextButtonStyle();
@@ -132,10 +146,16 @@ public class Utils {
         return tmpSkin;
     }
 
-    public static Skin createResultSkin(){
+    public Skin createResultSkin(){
         TextureAtlas basic_atlas = new TextureAtlas(Gdx.files.internal("images_packed/basic.atlas"));
         Skin tmpSkin = new Skin();
-        tmpSkin.add("result", CreateResultFont(20));
+        if(Gdx.app.getType() == Application.ApplicationType.Android) {
+            tmpSkin.add("result", CreateResultFont((int) (30 * Gdx.graphics.getDensity())));
+        }else{
+            if(Gdx.app.getType() == Application.ApplicationType.Desktop){
+                tmpSkin.add("result", CreateResultFont(30));
+            }
+        }
         tmpSkin.addRegions(basic_atlas);
         Label.LabelStyle lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
@@ -144,9 +164,10 @@ public class Utils {
         return tmpSkin;
     }
 
-    public static String getUrl(){
+    public String getUrl(){
         //return "http://192.168.1.107/GuessIt/game/";
-        return "http://localhost/GuessIt/game/";
-
+        //return "http://localhost/GuessIt/game/";
+        //return "http://guessit.yohosts.info/game/";
+        return "http://164.132.193.133/GuessIt/game/";
     }
 }

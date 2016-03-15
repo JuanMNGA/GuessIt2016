@@ -14,6 +14,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
 import com.skel.util.UserInfo;
@@ -31,8 +32,10 @@ import java.util.StringTokenizer;
  */
 public class NewDefScreen implements Screen, Net.HttpResponseListener {
 
+    Utils utilidades = new Utils();
+
     private UserInfo userInfo;
-    private Game g;
+    private MainGame g;
     private Stage stage;
     private Skin skin;
 
@@ -58,7 +61,7 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
     public void generateCategories(){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("id_aula",String.valueOf(grupo.getId()));
-        String url = Utils.getUrl()+"getCategories.php?";
+        String url = utilidades.getUrl()+"getCategories.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -76,7 +79,7 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
         parameters.put("id_usuario", String.valueOf(userInfo.getId()));
         parameters.put("id_aula",String.valueOf(grupo.getId()));
         parameters.put("fecha", dFormat.format(new Date(TimeUtils.millis())));
-        String url = Utils.getUrl()+"sendDefinition.php?";
+        String url = utilidades.getUrl()+"sendDefinition.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -168,14 +171,14 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
     }
 
     public void create(){
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = Utils.createBasicSkin();
+        skin = utilidades.createBasicSkin();
 
         createStageActors();
     }
 
-    public NewDefScreen(Game g, UserInfo UInfo, Group grupo){
+    public NewDefScreen(MainGame g, UserInfo UInfo, Group grupo){
         this.g = g;
         userInfo = UInfo;
         this.grupo = grupo;
@@ -231,6 +234,7 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
                     backButton.addListener(new InputListener(){
                         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                             g.setScreen(new MenuGameScreen(g, userInfo, grupo));
+                            dispose();
                             return true;
                         }
                     });
@@ -263,9 +267,9 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
+        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        stage.act(delta);
         stage.draw();
     }
 
@@ -291,6 +295,7 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        skin.dispose();
     }
 }

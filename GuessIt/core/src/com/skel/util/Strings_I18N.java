@@ -9,8 +9,9 @@ public class Strings_I18N {
 
     private String language;
 
-    private String saveNoteBookString, backString, statsString, backMenuString, rateWindowString, roundWindowString, newRoundString, hintString, answerString, guessString, chanceString, addDefString, selectLvString, selectCatString, enterWordString, enterArticleString, enterSentenceString, enterHintString, sendString, playString, statsDefString, statsSuccessString, statsAvgString, MPCategoryString, RepDefString;
+    private String yesString, noString, saveNoteBookString, backString, statsString, backMenuString, rateWindowString, roundWindowString, newRoundString, hintString, answerString, guessString, chanceString, addDefString, selectLvString, selectCatString, enterWordString, enterArticleString, enterSentenceString, enterHintString, sendString, playString, statsDefString, statsSuccessString, statsAvgString, MPCategoryString, RepDefString;
 
+    private String spaces = new String("    ");
     private ArrayList<String> preguntas = new ArrayList<String>();
     public Strings_I18N(){
 
@@ -18,23 +19,23 @@ public class Strings_I18N {
 
     private void setQuestions(){
         if(language.equals("English")){
-            preguntas.add("El verbo está bien conjugado.");
-            preguntas.add("Los signos de puntuación están bien.");
-            preguntas.add("Pregunta 3");
-            preguntas.add("Pregunta 4");
+            preguntas.add(spaces + "El verbo está bien conjugado.");
+            preguntas.add(spaces + "Los signos de puntuación están bien.");
+            preguntas.add(spaces + "Pregunta 3");
+            preguntas.add(spaces + "Pregunta 4");
         }else{
             if(language.equals("German")){
-                preguntas.add("Ist das Verb korrekt konjugiert?");
-                preguntas.add("Sind die Substantive groß geschrieben?");
-                preguntas.add("Ist das Verb an der korrekten Stelle?");
-                preguntas.add("Ist die Präposition korrekt?");
-                preguntas.add("Ist der Artikel des Substantivs korrekt?");
+                preguntas.add(spaces + "Ist das Verb korrekt konjugiert?");
+                preguntas.add(spaces + "Sind die Substantive groß geschrieben?");
+                preguntas.add(spaces + "Ist das Verb an der korrekten Stelle?");
+                preguntas.add(spaces + "Ist die Präposition korrekt?");
+                preguntas.add(spaces + "Ist der Artikel des Substantivs korrekt?");
             }else{
                 if(language.equals("Spanish")){
-                    preguntas.add("El verbo está bien conjugado.");
-                    preguntas.add("Los signos de puntuación están bien.");
-                    preguntas.add("Pregunta 3");
-                    preguntas.add("Pregunta 4");
+                    preguntas.add(spaces + "¿El verbo está bien conjugado?");
+                    preguntas.add(spaces + "¿Los signos de puntuación están bien?");
+                    preguntas.add(spaces + "Pregunta 3");
+                    preguntas.add(spaces + "Pregunta 4");
                 }
             }
         }
@@ -67,6 +68,8 @@ public class Strings_I18N {
             rateWindowString = new String("Rate this definition");
             roundWindowString = new String("Round stats");
             saveNoteBookString = new String("Save");
+            yesString = new String("Yes");
+            noString = new String("No");
 
             setQuestions();
         }else{
@@ -96,6 +99,8 @@ public class Strings_I18N {
                 rateWindowString = new String("Rate this definition");
                 roundWindowString = new String("Round stats");
                 saveNoteBookString = new String("Save");
+                yesString = new String("Yes");
+                noString = new String("No");
 
                 setQuestions();
             }else{
@@ -125,6 +130,8 @@ public class Strings_I18N {
                     rateWindowString = new String("Puntúa ésta definición");
                     roundWindowString = new String("Puntuación de la ronda");
                     saveNoteBookString = new String("Guardar");
+                    yesString = new String("Sí");
+                    noString = new String("No");
 
                     setQuestions();
                 }
@@ -135,6 +142,10 @@ public class Strings_I18N {
     public ArrayList<String> getQuestions(){
         return preguntas;
     }
+
+    public String yes(){ return yesString; }
+
+    public String no() { return noString; }
 
     public String save(){ return saveNoteBookString; }
 

@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.StringBuilder;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.*;
 
@@ -24,12 +25,15 @@ import java.util.*;
  * Created by juanm on 24/02/2016.
  */
 public class GameScreen implements Screen, Net.HttpResponseListener {
+
+    Utils utilidades = new Utils();
+
     private UserInfo userInfo;
-    private Game g;
+    private MainGame g;
     private Stage stage;
     private Skin skin;
 
-    private Skin sec_Skin = Utils.createResultSkin();
+    private Skin sec_Skin = utilidades.createResultSkin();
 
     private Group grupo;
 
@@ -59,7 +63,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
     private String defToSave;
 
     // Actores
-    Label definitionLabel, answerLabel, hintLabel, tryLabel, articleLabel;
+    Label definitionLabel, answerLabel, hintLabel, tryLabel, articleLabel, questionLabel;
     TextField answerText;
 
     private CheckBox questOne, questTwo;
@@ -67,16 +71,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
     private String questionOne, questionTwo, reportReason;
 
     private void setQuestions(){
-        int previousResult = 0;
-        previousResult = new Random().nextInt(locale.getQuestions().size());
+        int previousResult = new Random().nextInt(locale.getQuestions().size());
         questionOne = locale.getQuestions().get(previousResult);
-
-        int newQuest = new Random().nextInt(locale.getQuestions().size());
-        while(newQuest == previousResult){
-            newQuest = new Random().nextInt(locale.getQuestions().size());
-        }
-
-        questionTwo = locale.getQuestions().get(newQuest);
     }
 
     public void createStageActors(){
@@ -123,38 +119,40 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
 
         setQuestions();
 
-        questOne = new CheckBox(questionOne, skin.get("questions", CheckBox.CheckBoxStyle.class));
+        questionLabel = new Label(questionOne, skin.get("default", Label.LabelStyle.class));
+        questionLabel.setWrap(true);
+
+        questOne = new CheckBox(locale.yes(), skin.get("questions", CheckBox.CheckBoxStyle.class));
         questOne.getLabel().setAlignment(Align.center);
         questOne.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(questOne.isChecked()){
-                    puntuacion++;
+                if(questOne.isChecked()) {
+                    reporte = 0;
                     reportReason = "";
-                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
-                }else{
-                    puntuacion--;
-                    reportReason = "";
-                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
+                    puntuacion = 3;
+                    Gdx.app.log("puntuacion", new String().valueOf(puntuacion));
                 }
-                reportReason = "";
             }
         });
-        questTwo = new CheckBox(questionTwo, skin.get("questions", CheckBox.CheckBoxStyle.class));
+        questTwo = new CheckBox(locale.no(), skin.get("questions", CheckBox.CheckBoxStyle.class));
         questTwo.getLabel().setAlignment(Align.center);
         questTwo.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
-                if(questTwo.isChecked()){
-                    puntuacion++;
-                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
-                }else{
-                    puntuacion--;
-                    Gdx.app.log("puntuacion",String.valueOf(puntuacion));
+                if(questTwo.isChecked()) {
+                    reporte = 0;
+                    reportReason = "";
+                    puntuacion = 1;
+                    Gdx.app.log("puntuacion", new String().valueOf(puntuacion));
                 }
-                reportReason = "";
             }
         });
+
+        ButtonGroup questionGroup = new ButtonGroup(questOne, questTwo);
+        questionGroup.setMaxCheckCount(1);
+        questionGroup.setMinCheckCount(0);
+        questionGroup.setUncheckLast(true);
 
         // Buttons
         TextButton reportButton = new TextButton("",skin.get("report", TextButton.TextButtonStyle.class));
@@ -163,6 +161,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                 reporte = 1;
                 questOne.setChecked(false);
                 questTwo.setChecked(false);
+                puntuacion = 0;
+                Gdx.app.log("puntuacion", new String().valueOf(puntuacion));
                 rateWindow.setVisible(false);
                 reportReasonWindow.setVisible(true);
                 return true;
@@ -200,9 +200,10 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         });
         rateWindow.add(resultDefLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(5);
         rateWindow.row();
-        rateWindow.add(questOne).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
+        rateWindow.add(questionLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(5);
         rateWindow.row();
-        rateWindow.add(questTwo).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(5);
+        rateWindow.add(questOne).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.2f).colspan(3);
+        rateWindow.add(questTwo).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.2f).colspan(2);
         rateWindow.row();
         // Preguntas label aqui
         rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
@@ -211,7 +212,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
         rateWindow.row();
-        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f).colspan(2);
+        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f).colspan(3);
         rateWindow.add(saveButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f).colspan(2);
         rateWindow.row();
         rateWindow.pack();
@@ -222,6 +223,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         newRound.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new ConfigGameScreen(g,userInfo,grupo));
+                dispose();
                 return true;
             }
         });
@@ -230,6 +232,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         backMenu.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new MenuGameScreen(g,userInfo, grupo));
+                dispose();
                 return true;
             }
         });
@@ -294,7 +297,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         definitionLabel = new Label("",skin.get("default", Label.LabelStyle.class));
         definitionLabel.setWrap(true);
 
-        layoutTable.add(definitionLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(3);
+        layoutTable.add(definitionLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.25f).colspan(3);
         layoutTable.row();
 
         answerLabel = new Label(locale.answer(), skin.get("default", Label.LabelStyle.class));
@@ -409,14 +412,14 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
     }
 
     public void create(){
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = Utils.createBasicSkin();
+        skin = utilidades.createBasicSkin();
 
         createStageActors();
     }
 
-    public GameScreen(Game g, UserInfo UInfo, Group grupo, int selectedLv, ArrayList<Integer> categorias){
+    public GameScreen(MainGame g, UserInfo UInfo, Group grupo, int selectedLv, ArrayList<Integer> categorias){
         this.g = g;
         userInfo = UInfo;
         this.selectedLv = selectedLv;
@@ -438,7 +441,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         parameters.put("level",String.valueOf(selectedLv));
         parameters.put("id_aula",String.valueOf(grupo.getId()));
         parameters.put("test",String.valueOf(userInfo.getType()));
-        String url = Utils.getUrl()+"getDefinitions.php?";
+        String url = utilidades.getUrl()+"getDefinitions.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -457,7 +460,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         parameters.put("reporte", String.valueOf(reporte));
         parameters.put("motivo", new String(reportReason.getBytes(), Charset.forName("UTF-8")));
         parameters.put("fecha",new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date(TimeUtils.millis())));
-        String url = Utils.getUrl()+"sendRate.php?";
+        String url = utilidades.getUrl()+"sendRate.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -511,6 +514,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     @Override
                     public void run() {
                         g.setScreen(new ConfigGameScreen(g,userInfo,grupo));
+                        dispose();
                     }
                 });
             }
@@ -534,9 +538,9 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
+        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        stage.act(delta);
         stage.draw();
     }
 
@@ -562,6 +566,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        skin.dispose();
+        sec_Skin.dispose();
     }
 }

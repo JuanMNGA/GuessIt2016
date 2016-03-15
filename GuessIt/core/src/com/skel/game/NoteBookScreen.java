@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Utils;
 
@@ -18,8 +19,8 @@ import com.skel.util.Utils;
  * Created by juanm on 08/03/2016.
  */
 public class NoteBookScreen implements Screen {
-
-    private Game g;
+    Utils utilidades = new Utils();
+    private MainGame g;
     private Stage stage;
     private Skin skin;
 
@@ -56,6 +57,7 @@ public class NoteBookScreen implements Screen {
         CancelButton.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 g.setScreen(new MainScreen(g));
+                dispose();
                 return true;
             }
         });
@@ -74,14 +76,14 @@ public class NoteBookScreen implements Screen {
     }
 
     public void create(){
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = Utils.createBasicSkin();
+        skin = utilidades.createBasicSkin();
 
         createStageActors();
     }
 
-    public NoteBookScreen(Game g){
+    public NoteBookScreen(MainGame g){
         this.g = g;
         defSaved = Gdx.app.getPreferences("notebook");
         keys = new String[defSaved.get().size()];
@@ -95,9 +97,9 @@ public class NoteBookScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
+        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        stage.act(delta);
         stage.draw();
     }
 
@@ -123,6 +125,7 @@ public class NoteBookScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        skin.dispose();
     }
 }

@@ -10,6 +10,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
 import com.skel.util.Strings_I18N;
@@ -20,10 +21,13 @@ import com.skel.util.Utils;
  * Created by juanm on 25/02/2016.
  */
 public class MenuGameScreen implements Screen {
+
+    Utils utilidades = new Utils();
+
     private Stage stage;
     private Skin skin;
     private Strings_I18N locale;
-    Game g;
+    MainGame g;
     UserInfo userInfo;
     Group grupo;
 
@@ -42,6 +46,7 @@ public class MenuGameScreen implements Screen {
         playButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new ConfigGameScreen(g,userInfo, grupo));
+                dispose();
                 return true;
             }
         });
@@ -49,6 +54,7 @@ public class MenuGameScreen implements Screen {
         statsButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new StatsScreen(g, userInfo, grupo));
+                dispose();
                 return true;
             }
         });
@@ -56,6 +62,7 @@ public class MenuGameScreen implements Screen {
         newDefButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new NewDefScreen(g, userInfo, grupo));
+                dispose();
                 return true;
             }
         });
@@ -63,6 +70,7 @@ public class MenuGameScreen implements Screen {
         backButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new UserGroupsScreen(g, userInfo));
+                dispose();
                 return true;
             }
         });
@@ -86,14 +94,14 @@ public class MenuGameScreen implements Screen {
     }
 
     public void create(){
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = Utils.createBasicSkin();
+        skin = utilidades.createBasicSkin();
 
         createStageActors();
     }
 
-    public MenuGameScreen(Game g, UserInfo UInfo, Group grupo){
+    public MenuGameScreen(MainGame g, UserInfo UInfo, Group grupo){
         this.g = g;
         userInfo = UInfo;
         this.grupo = grupo;
@@ -107,9 +115,9 @@ public class MenuGameScreen implements Screen {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
+        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        stage.act(delta);
         stage.draw();
     }
 
@@ -135,6 +143,7 @@ public class MenuGameScreen implements Screen {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        skin.dispose();
     }
 }

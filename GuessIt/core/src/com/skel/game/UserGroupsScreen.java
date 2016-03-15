@@ -12,6 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
 import com.skel.util.UserInfo;
@@ -25,8 +26,11 @@ import java.util.StringTokenizer;
  * Created by juanm on 22/02/2016.
  */
 public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
+
+    Utils utilidades = new Utils();
+
     private UserInfo userInfo;
-    private Game g;
+    private MainGame g;
     private Stage stage;
     private Skin skin;
 
@@ -38,7 +42,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
 
     private Group selected_group;
 
-    public UserGroupsScreen(Game g, UserInfo UInfo) {
+    public UserGroupsScreen(MainGame g, UserInfo UInfo) {
         this.g = g;
         userInfo = UInfo;
         create();
@@ -87,9 +91,9 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
     }
 
     public void create(){
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = Utils.createBasicSkin();
+        skin = utilidades.createBasicSkin();
 
         createStageActors();
         //Llamar a connection y que devolviese el resultado de los grupos a los que el alumno ha sido validado
@@ -99,7 +103,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
     public void refreshGroups(){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("id_usuario",String.valueOf(userInfo.getId()));
-        String url = Utils.getUrl()+"getGroupsJoined.php?";
+        String url = utilidades.getUrl()+"getGroupsJoined.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -113,9 +117,9 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
+        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        stage.act(delta);
         stage.draw();
     }
 
@@ -141,7 +145,8 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        skin.dispose();
     }
 
     @Override
@@ -169,6 +174,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                                 Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang, sGroupLang);
                                 selected_group = grupo;
                                 g.setScreen(new MenuGameScreen(g,userInfo,selected_group));
+                                dispose();
                                 Gdx.app.log("probando grupo", grupo.getName());
                                 // Llamada a nueva screen con la info del grupo
 
@@ -196,6 +202,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                 backButton.addListener(new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                         g.setScreen(new LoginScreen(g));
+                        dispose();
                         return true;
                     }
                 });
@@ -205,6 +212,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                 refreshButton.addListener(new InputListener(){
                     public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                         g.setScreen(new UserGroupsScreen(g,userInfo));
+                        dispose();
                         return true;
                     }
                 });

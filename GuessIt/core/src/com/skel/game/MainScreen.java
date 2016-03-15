@@ -9,18 +9,23 @@ import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Utils;
 
 public class MainScreen implements Screen {
+
+	Utils utilidades = new Utils();
+
 	Skin skin;
 	Stage stage;
 
-	Game g;
+	MainGame g;
 
 	//Items del screen
 	TextButton newGameButton;
@@ -29,7 +34,7 @@ public class MainScreen implements Screen {
 	TextButton notebookButton;
 	Label lab;
 
-	public MainScreen(Game g){
+	public MainScreen(MainGame g){
 		create();
 		this.g = g;
 	}
@@ -66,6 +71,7 @@ public class MainScreen implements Screen {
 		newGameButton.addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				g.setScreen(new LoginScreen(g));
+				dispose();
 				return true;
 			}
 		});
@@ -73,6 +79,7 @@ public class MainScreen implements Screen {
 		registerButton.addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				g.setScreen(new RegisterScreen(g));
+				dispose();
 				return true;
 			}
 		});
@@ -80,6 +87,7 @@ public class MainScreen implements Screen {
 		notebookButton.addListener(new InputListener(){
 			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
 				g.setScreen(new NoteBookScreen(g));
+				dispose();
 				return true;
 			}
 		});
@@ -93,28 +101,19 @@ public class MainScreen implements Screen {
 	}
 
 	public void create () {
-		stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
-			@Override
-			public boolean keyDown(int keyCode) {
-				if (keyCode == Input.Keys.BACK) {
-					Gdx.app.exit();
-				}
-				return super.keyDown(keyCode);
-			}
-		};
+		stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
-		Gdx.input.setCatchBackKey(true);
 		//Setting up Basic Skin (default skin)
-		skin = Utils.createBasicSkin();
+		skin = utilidades.createBasicSkin();
 
 		createStageActors();
 	}
 
 	@Override
 	public void render (float delta) {
-		Gdx.gl.glClearColor(1, 1, 0.8f, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		stage.act();
+		Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+		stage.act(delta);
 		stage.draw();
 	}
 
@@ -144,6 +143,7 @@ public class MainScreen implements Screen {
 
 	@Override
 	public void dispose() {
-
+		stage.dispose();
+		skin.dispose();
 	}
 }

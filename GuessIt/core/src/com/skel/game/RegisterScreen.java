@@ -9,6 +9,7 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
+import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Utils;
 
@@ -21,7 +22,7 @@ import java.util.HashMap;
  * Created by juanm on 28/01/2016.
  */
 public class RegisterScreen implements Screen, Net.HttpResponseListener {
-
+    Utils utilidades = new Utils();
     Stage stage;
     Skin skin;
 
@@ -33,31 +34,22 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     //Container
     Table scroll_contenedor;
 
-    Game g;
+    MainGame g;
 
     //Utiles net
     SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Net.HttpRequest httpsolicitud;
     String httpMethod = Net.HttpMethods.POST;
 
-    public RegisterScreen(Game g){
+    public RegisterScreen(MainGame g){
         this.g = g;
         create();
     }
 
     public void create(){
-        skin = Utils.createBasicSkin();
-        stage = new Stage(new StretchViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
-            @Override
-            public boolean keyDown(int keyCode) {
-                if (keyCode == Input.Keys.BACK) {
-                    g.setScreen(new MainScreen(g));
-                }
-                return super.keyDown(keyCode);
-            }
-        };
+        skin = utilidades.createBasicSkin();
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
     }
@@ -120,7 +112,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                         parameters.put("usuario", userLogin.getText());//new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
                         parameters.put("password", userPass.getText());//new String(userPass.getText().getBytes(), Charset.forName("UTF-8")));
                         parameters.put("alta",dFormat.format(new Date(TimeUtils.millis())));
-                        String url = Utils.getUrl()+"register.php?";
+                        String url = utilidades.getUrl()+"register.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";
                         httpsolicitud = new Net.HttpRequest(httpMethod);
                         httpsolicitud.setUrl(url);
@@ -135,6 +127,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
         backButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new MainScreen(g));
+                dispose();
                 return true;
             }
         });
@@ -144,43 +137,43 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
         scroll_contenedor = new Table();
 
-        scroll_contenedor.add(labelName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(labelName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(userName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(userName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(labelLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(labelLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(userLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(userLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(labelEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(labelEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(userEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(userEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(labelLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(labelLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row(); // Creamos una nueva fila
 
-        scroll_contenedor.add(userLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(userLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(labelPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(labelPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(userPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        scroll_contenedor.add(userPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
 
         scroll_contenedor.row();
 
@@ -211,9 +204,9 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void render(float delta) {
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        stage.act();
+        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        stage.act(delta);
         stage.draw();
     }
 
@@ -239,7 +232,8 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
     @Override
     public void dispose() {
-
+        stage.dispose();
+        skin.dispose();
     }
 
     @Override
@@ -255,6 +249,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                     Gdx.app.log("conexion",Response);
                     //Gdx.app.log("time", dFormat.format(new Date(TimeUtils.millis()).toString()));
                     g.setScreen(new MainScreen(g));
+                    dispose();
                 }
             }
         });
