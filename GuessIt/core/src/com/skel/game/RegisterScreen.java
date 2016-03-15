@@ -36,6 +36,8 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
     MainGame g;
 
+    Window successRegisterWindow;
+
     //Utiles net
     SimpleDateFormat dFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     Net.HttpRequest httpsolicitud;
@@ -55,14 +57,45 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     }
 
     public void createStageActors(){
+
+        successRegisterWindow = new Window("Success", skin.get("default", Window.WindowStyle.class));
+        successRegisterWindow.setMovable(false);
+        successRegisterWindow.setFillParent(true);
+        successRegisterWindow.padTop(Gdx.graphics.getHeight()*0.05f);
+        successRegisterWindow.getTitleLabel().setAlignment(Align.center);
+        successRegisterWindow.getTitleLabel().setWrap(true);
+        successRegisterWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        successRegisterWindow.setVisible(false);
+
+        Label sucessRegister = new Label("Successfully registered", skin.get("default", Label.LabelStyle.class));
+        sucessRegister.setAlignment(Align.center);
+        sucessRegister.setWrap(true);
+
+        successRegisterWindow.add(sucessRegister).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f);
+        successRegisterWindow.row();
+
+        TextButton registerOk = new TextButton("Ok", skin.get("default", TextButton.TextButtonStyle.class));
+        registerOk.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                g.setScreen(new MainScreen(g));
+                Gdx.input.setOnscreenKeyboardVisible(false);
+                dispose();
+                return true;
+            }
+        });
+
+        successRegisterWindow.add(registerOk).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        successRegisterWindow.row();
+        successRegisterWindow.pack();
+
         //Creacion de los elementos de la pantalla
-        labelLogin = new Label("Username",skin.get("default", Label.LabelStyle.class));
+        labelLogin = new Label("Username",skin.get("small", Label.LabelStyle.class));
         userLogin = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
-        labelPass = new Label("Password",skin.get("default", Label.LabelStyle.class));
+        labelPass = new Label("Password",skin.get("small", Label.LabelStyle.class));
         userPass = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
-        labelName = new Label("Name", skin.get("default", Label.LabelStyle.class));
-        labelLastname = new Label("Last name", skin.get("default", Label.LabelStyle.class));
-        labelEmail = new Label("Email", skin.get("default", Label.LabelStyle.class));
+        labelName = new Label("Name", skin.get("small", Label.LabelStyle.class));
+        labelLastname = new Label("Last name", skin.get("small", Label.LabelStyle.class));
+        labelEmail = new Label("Email", skin.get("small", Label.LabelStyle.class));
         userName = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
         userLastname = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
         userEmail = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
@@ -127,6 +160,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
         backButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 g.setScreen(new MainScreen(g));
+                Gdx.input.setOnscreenKeyboardVisible(false);
                 dispose();
                 return true;
             }
@@ -137,64 +171,57 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
         scroll_contenedor = new Table();
 
-        scroll_contenedor.add(labelName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(labelName).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add(labelLastname).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(userName).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(userName).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add(userLastname).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(labelLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(labelEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.075f).colspan(3);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(userLastname).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(userEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.075f).colspan(3);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(labelEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
-
-        scroll_contenedor.row();
-
-        scroll_contenedor.add(userEmail).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
-
-        scroll_contenedor.row();
-
-        scroll_contenedor.add(labelLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(labelLogin).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add(labelPass).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
 
         scroll_contenedor.row(); // Creamos una nueva fila
 
-        scroll_contenedor.add(userLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(userLogin).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.075f);
+        scroll_contenedor.add(userPass).width(Gdx.graphics.getWidth()*0.35f).height(Gdx.graphics.getHeight()*0.075f);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(labelPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(LoginButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.075f).colspan(3);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(userPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.05f);
+        scroll_contenedor.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.075f).colspan(3);
 
         scroll_contenedor.row();
 
-        scroll_contenedor.add(LoginButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
-
-        scroll_contenedor.row();
-
-        scroll_contenedor.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
-
-        scroll_contenedor.row();
-
-        ScrollPane scroller = new ScrollPane(scroll_contenedor);
+        //ScrollPane scroller = new ScrollPane(scroll_contenedor);
 
         // Esta tabla es contenedora del scroll pane, importante para visualizar los contenidos y centrar la interfaz
 
         final Table table = new Table();
         table.setFillParent(true);
-        table.add(scroller).fill().expand();
-
+        table.add(scroll_contenedor).fill().expandX();
+        table.top();
         //Anadimos la tabla al stage
         stage.addActor(table);
+        stage.addActor(successRegisterWindow);
     }
 
     @Override
@@ -248,8 +275,8 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                 }else{
                     Gdx.app.log("conexion",Response);
                     //Gdx.app.log("time", dFormat.format(new Date(TimeUtils.millis()).toString()));
-                    g.setScreen(new MainScreen(g));
-                    dispose();
+                    Gdx.input.setOnscreenKeyboardVisible(false);
+                    successRegisterWindow.setVisible(true);
                 }
             }
         });

@@ -61,7 +61,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
             }
         });
         // Join icon
-        ImageButton joinIcon = new ImageButton(skin.get("join_icon", ImageButton.ImageButtonStyle.class));
+        ImageTextButton joinIcon = new ImageTextButton("   Join group", skin.get("join_icon", ImageTextButton.ImageTextButtonStyle.class));
         joinIcon.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 Gdx.app.log("botones","join pulsado");
@@ -81,8 +81,8 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
         //ScrollTable.add(searchInput).width(Gdx.graphics.getWidth()*0.7f).height(Gdx.graphics.getHeight()*0.1f);
         //ScrollTable.row();
 
-        ScrollTable.add(joinIcon).width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
-        ScrollTable.add(joinLabel).width(Gdx.graphics.getWidth()*0.7f).height(Gdx.graphics.getHeight()*0.1f);
+        ScrollTable.add(joinIcon).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        //ScrollTable.add(joinLabel).width(Gdx.graphics.getWidth()*0.7f).height(Gdx.graphics.getHeight()*0.1f);
         ScrollTable.row();
         ScrollTable.setFillParent(true);
         ScrollTable.top();
@@ -181,7 +181,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                                 return true;
                             }
                         });
-                        ScrollTable.add(tmpTButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.15f).colspan(2);
+                        ScrollTable.add(tmpTButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.15f);
                         ScrollTable.row();
                     }
                     /*Gdx.app.log("conexion", "tabla creada");

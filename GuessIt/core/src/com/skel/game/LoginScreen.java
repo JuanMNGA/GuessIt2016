@@ -178,12 +178,14 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                 if(Response.isEmpty()){
                     Gdx.app.log("conexion","fallida");
                     g.setScreen(new MainScreen(g));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
                     dispose();
                 }else {
                     UInfo.setInfo(Response);
                     //Gdx.app.log("conexion",UInfo.getName());
                     Gdx.app.log("conexion","resuelta");
                     g.setScreen(new UserGroupsScreen(g,UInfo));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
                     dispose();
                 }
             }

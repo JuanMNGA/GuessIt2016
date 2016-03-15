@@ -37,6 +37,11 @@ public class MenuGameScreen implements Screen {
         TextButton backButton = new TextButton(locale.back(), skin.get("default", TextButton.TextButtonStyle.class));
         TextButton newDefButton = new TextButton(locale.addDef(), skin.get("default", TextButton.TextButtonStyle.class));
 
+        playButton.getLabel().setWrap(true);
+        statsButton.getLabel().setWrap(true);
+        backButton.getLabel().setWrap(true);
+        newDefButton.getLabel().setWrap(true);
+
         if(userInfo.canAddDefinition()){
             newDefButton.setVisible(true);
         }else{

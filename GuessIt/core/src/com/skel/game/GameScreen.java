@@ -68,7 +68,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
 
     private CheckBox questOne, questTwo;
 
-    private String questionOne, questionTwo, reportReason;
+    private String questionOne, questionTwo, reportReason = new String();
 
     private void setQuestions(){
         int previousResult = new Random().nextInt(locale.getQuestions().size());
@@ -105,6 +105,24 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         reportReasonWindow.getTitleLabel().setWrap(true);
         reportReasonWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         reportReasonWindow.setVisible(false);
+
+        final Window chancesWindow = new Window("Failure", skin.get("default", Window.WindowStyle.class));
+        chancesWindow.setMovable(false);
+        chancesWindow.setFillParent(true);
+        chancesWindow.padTop(Gdx.graphics.getHeight()*0.05f);
+        chancesWindow.getTitleLabel().setAlignment(Align.center);
+        chancesWindow.getTitleLabel().setWrap(true);
+        chancesWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        chancesWindow.setVisible(false);
+
+        final Window hintWindow = new Window(locale.hint(), skin.get("default", Window.WindowStyle.class));
+        hintWindow.setMovable(false);
+        hintWindow.setFillParent(true);
+        hintWindow.padTop(Gdx.graphics.getHeight()*0.05f);
+        hintWindow.getTitleLabel().setAlignment(Align.center);
+        hintWindow.getTitleLabel().setWrap(true);
+        hintWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        hintWindow.setVisible(false);
 
         // Add window actors
         // Label
@@ -155,7 +173,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         questionGroup.setUncheckLast(true);
 
         // Buttons
-        TextButton reportButton = new TextButton("",skin.get("report", TextButton.TextButtonStyle.class));
+        ImageTextButton reportButton = new ImageTextButton("Report",skin.get("report", ImageTextButton.ImageTextButtonStyle.class));
         reportButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 reporte = 1;
@@ -171,20 +189,22 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         TextButton sendButton = new TextButton(locale.send(),skin.get("default", TextButton.TextButtonStyle.class));
         sendButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                Gdx.app.log("puntuacion","enviada");
-                rateWindow.setVisible(false);
-                if(acierto == 1)
-                    userInfo.addDefPlayed();
-                sendRate();
-                numIntentos = 3;
-                tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
-                questOne.setChecked(false);
-                questTwo.setChecked(false);
-                reportReason = "";
-                // Añadimos un punto al marcador oculto para permitir introducir nuevas definiciones.
-                if(engine.endRound()){
-                    // Change to final rate screen
-                    Gdx.app.log("cambio","a pantalla de puntuacion final");
+                if(questOne.isChecked() || questTwo.isChecked() || !reportReason.contentEquals("")) {
+                    Gdx.app.log("puntuacion", "enviada");
+                    rateWindow.setVisible(false);
+                    if (acierto == 1)
+                        userInfo.addDefPlayed();
+                    sendRate();
+                    numIntentos = 3;
+                    tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
+                    questOne.setChecked(false);
+                    questTwo.setChecked(false);
+                    reportReason = "";
+                    // Añadimos un punto al marcador oculto para permitir introducir nuevas definiciones.
+                    if (engine.endRound()) {
+                        // Change to final rate screen
+                        Gdx.app.log("cambio", "a pantalla de puntuacion final");
+                    }
                 }
                 return true;
             }
@@ -198,22 +218,18 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                 return true;
             }
         });
-        rateWindow.add(resultDefLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(5);
+        rateWindow.add(resultDefLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(2);
         rateWindow.row();
-        rateWindow.add(questionLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(5);
+        rateWindow.add(questionLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(2);
         rateWindow.row();
-        rateWindow.add(questOne).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.2f).colspan(3);
-        rateWindow.add(questTwo).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.2f).colspan(2);
+        rateWindow.add(questOne).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.2f);
+        rateWindow.add(questTwo).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.2f);
         rateWindow.row();
         // Preguntas label aqui
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add(reportButton).width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.1f).height(Gdx.graphics.getHeight()*0.1f);
-        rateWindow.add().width(Gdx.graphics.getWidth()*0.2f).height(Gdx.graphics.getHeight()*0.1f);
+        rateWindow.add(reportButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);
         rateWindow.row();
-        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f).colspan(3);
-        rateWindow.add(saveButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f).colspan(2);
+        rateWindow.add(sendButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f);
+        rateWindow.add(saveButton).width(Gdx.graphics.getWidth()*0.4f).height(Gdx.graphics.getHeight()*0.15f);
         rateWindow.row();
         rateWindow.pack();
 
@@ -323,6 +339,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 //rateWindow.setVisible(true);
                 if(engine.compare(answerText.getText())){
+                    Gdx.input.setOnscreenKeyboardVisible(false);
                     Gdx.app.log("comparacion","exito");
                     answerText.setColor(Color.CYAN);
                     acierto = 1;
@@ -339,18 +356,22 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                         hintLabel.setVisible(false);
                         articleLabel.setText(engine.getArticle());
                         answerText.setText("");
-                        answerText.setColor(Color.LIGHT_GRAY);
+                        answerText.setColor(Color.WHITE);
                         setQuestions();
+                        questionLabel.setText(questionOne);
                     }else{
                         finalPoints.setText(engine.getResultPoints());
                         pointWindow.setVisible(true);
                     }
                 }else{
+                    Gdx.input.setOnscreenKeyboardVisible(false);
                     Gdx.app.log("comparacion","fallo");
                     answerText.setColor(Color.RED);
                     numIntentos--;
                     tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
+                    chancesWindow.setVisible(true);
                     if(numIntentos == 0){
+                        Gdx.input.setOnscreenKeyboardVisible(false);
                         acierto = 0;
                         rateWindow.setVisible(true);
                         resultDefLabel.setText(engine.getWrongPhrase());
@@ -363,7 +384,9 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                             hintLabel.setText(engine.getHint());
                             hintLabel.setVisible(false);
                             answerText.setText("");
-                            answerText.setColor(Color.LIGHT_GRAY);
+                            answerText.setColor(Color.WHITE);
+                            setQuestions();
+                            questionLabel.setText(questionOne);
                         }else{
                             finalPoints.setText(engine.getResultPoints());
                             pointWindow.setVisible(true);
@@ -381,6 +404,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         hintButton.addListener(new InputListener(){
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                 if(numIntentos < 3) {
+                    hintWindow.setVisible(true);
                     hintLabel.setText(engine.getHint());
                     hintLabel.setVisible(true);
                     pista = 1;
@@ -394,21 +418,51 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         hintLabel = new Label("", skin.get("default", Label.LabelStyle.class));
         hintLabel.setWrap(true);
 
-        layoutTable.add(hintLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(3);
-        layoutTable.row();
+        hintWindow.add(hintLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f).colspan(3);
+        hintWindow.row();
+
+        TextButton hintOk = new TextButton("Ok", skin.get("default", TextButton.TextButtonStyle.class));
+        hintOk.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                hintWindow.setVisible(false);
+                return true;
+            }
+        });
+
+        hintWindow.add(hintOk).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        hintWindow.row();
+        hintWindow.pack();
 
         tryLabel = new Label(locale.chances() + " ", skin.get("default", Label.LabelStyle.class));
         tryLabel.setWrap(true);
         tryLabel.setAlignment(Align.center);
-        layoutTable.add(tryLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(3);
-        layoutTable.row();
+        //layoutTable.add(tryLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(3);
+        //layoutTable.row();
+        chancesWindow.add(tryLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        chancesWindow.row();
+
+        TextButton chancesOk = new TextButton("Ok", skin.get("default", TextButton.TextButtonStyle.class));
+        chancesOk.addListener(new InputListener(){
+            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                chancesWindow.setVisible(false);
+                answerText.setColor(Color.WHITE);
+                return true;
+            }
+        });
+
+        chancesWindow.add(chancesOk).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        chancesWindow.row();
+        chancesWindow.pack();
 
         layoutTable.setFillParent(true);
+        layoutTable.top();
 
         stage.addActor(layoutTable);
         stage.addActor(rateWindow);
         stage.addActor(pointWindow);
         stage.addActor(reportReasonWindow);
+        stage.addActor(chancesWindow);
+        stage.addActor(hintWindow);
     }
 
     public void create(){

@@ -1,9 +1,6 @@
 package com.skel.game;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Preferences;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
@@ -38,13 +35,13 @@ public class NoteBookScreen implements Screen {
             final Label noteLabel = new Label(keys[i], skin.get("default", Label.LabelStyle.class));
             scroller.add(noteLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
             scroller.row();
-            TextArea tmpTA = new TextArea(defSaved.getString(keys[i]), skin.get("default", TextField.TextFieldStyle.class));
+            final TextArea tmpTA = new TextArea(defSaved.getString(keys[i]), skin.get("default", TextField.TextFieldStyle.class));
             tmpTA.setMaxLength(250);
             tmpTA.setPrefRows(4);
             tmpTA.addListener(new InputListener(){
                 public boolean keyTyped (InputEvent event, char character) {
                     super.keyTyped(event,character);
-                    defSaved.putString(noteLabel.getText().toString(),defSaved.getString(noteLabel.getText().toString())+character);
+                    defSaved.putString(noteLabel.getText().toString(),tmpTA.getText());
                     defSaved.flush();
                     return true;
                 }
@@ -57,6 +54,7 @@ public class NoteBookScreen implements Screen {
         CancelButton.addListener(new InputListener() {
             public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
                 g.setScreen(new MainScreen(g));
+                Gdx.input.setOnscreenKeyboardVisible(false);
                 dispose();
                 return true;
             }

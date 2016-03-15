@@ -11,7 +11,7 @@ public class Strings_I18N {
 
     private String yesString, noString, saveNoteBookString, backString, statsString, backMenuString, rateWindowString, roundWindowString, newRoundString, hintString, answerString, guessString, chanceString, addDefString, selectLvString, selectCatString, enterWordString, enterArticleString, enterSentenceString, enterHintString, sendString, playString, statsDefString, statsSuccessString, statsAvgString, MPCategoryString, RepDefString;
 
-    private String spaces = new String("    ");
+    private String spaces = new String(" * ");
     private ArrayList<String> preguntas = new ArrayList<String>();
     public Strings_I18N(){
 
@@ -123,7 +123,7 @@ public class Strings_I18N {
                     hintString = new String("Pista");
                     addDefString = new String("Añade una definición!");
                     chanceString = new String("Intentos:");
-                    guessString = new String("Acertar");
+                    guessString = new String("Adivinar");
                     answerString = new String("Respuesta:");
                     newRoundString = new String("Nueva ronda!");
                     backMenuString = new String("Volver al menú");

@@ -223,6 +223,9 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
                        public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                            sendingDefinition = true;
                            sendDefinition();
+                           g.setScreen(new MenuGameScreen(g,userInfo,grupo));
+                           Gdx.input.setOnscreenKeyboardVisible(false);
+                           dispose();
                            return true;
                        }
                     });
@@ -234,6 +237,7 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
                     backButton.addListener(new InputListener(){
                         public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
                             g.setScreen(new MenuGameScreen(g, userInfo, grupo));
+                            Gdx.input.setOnscreenKeyboardVisible(false);
                             dispose();
                             return true;
                         }
