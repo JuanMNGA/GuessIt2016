@@ -7,6 +7,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.TimeUtils;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -29,8 +30,8 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     //Items de la pantalla
     Label labelLogin,labelPass,labelName,labelLastname,labelEmail;
     TextField userLogin, userPass, userName, userLastname, userEmail;
-    TextButton LoginButton, backButton;
-
+    TextButton LoginButton;
+    ImageTextButton backButton;
     //Container
     Table scroll_contenedor;
 
@@ -43,13 +44,13 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     Net.HttpRequest httpsolicitud;
     String httpMethod = Net.HttpMethods.POST;
 
-    public RegisterScreen(MainGame g){
+    public RegisterScreen(MainGame g, Skin skin){
         this.g = g;
+        this.skin = skin;
         create();
     }
 
     public void create(){
-        skin = utilidades.createBasicSkin();
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
 
@@ -75,12 +76,11 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
         successRegisterWindow.row();
 
         TextButton registerOk = new TextButton("Ok", skin.get("default", TextButton.TextButtonStyle.class));
-        registerOk.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        registerOk.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 g.setScreen(new MainScreen(g));
                 Gdx.input.setOnscreenKeyboardVisible(false);
                 dispose();
-                return true;
             }
         });
 
@@ -101,7 +101,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
         userEmail = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
 
         LoginButton = new TextButton("Register",skin);
-        backButton = new TextButton("Back",skin.get("default", TextButton.TextButtonStyle.class));
+        backButton = new ImageTextButton("Back",skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
 
         //Activar caracteristicas de los actores
         //Labels
@@ -118,26 +118,20 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
 
         //Text Fields
         userLogin.setAlignment(Align.center);
-        userLogin.setMessageText("User");
 
         userPass.setPasswordMode(true);
-        userPass.setMessageText("Password");
         userPass.setAlignment(Align.center);
         userPass.setPasswordCharacter('*');
 
         userName.setAlignment(Align.center);
-        userName.setMessageText("Name");
 
         userLastname.setAlignment(Align.center);
-        userLastname.setMessageText("Last name");
 
         userEmail.setAlignment(Align.center);
-        userEmail.setMessageText("Email");
 
         //Funciones callback
-        LoginButton.addListener(
-                new InputListener(){
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        LoginButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                         HashMap<String, String> parameters = new HashMap<String, String>();
                         parameters.put("nombre", userName.getText());//new String(userName.getText().getBytes(), Charset.forName("UTF-8")));
                         parameters.put("apellidos", userLastname.getText());//new String(userLastname.getText().getBytes(), Charset.forName("UTF-8")));
@@ -151,18 +145,15 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
                         httpsolicitud.setUrl(url);
                         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
                         Gdx.net.sendHttpRequest(httpsolicitud, RegisterScreen.this);
-
-                        return true;
                     }
                 }
         );
 
-        backButton.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 g.setScreen(new MainScreen(g));
                 Gdx.input.setOnscreenKeyboardVisible(false);
                 dispose();
-                return true;
             }
         });
 
@@ -260,7 +251,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 
     @Override

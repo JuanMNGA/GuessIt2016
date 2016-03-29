@@ -78,12 +78,12 @@ public class UserInfo {
     }
 
     public void addedNewDef(){
-        prefs.putInteger("defplayed", prefs.getInteger("defplayed") - 20);
+        prefs.putInteger("defplayed", prefs.getInteger("defplayed") - 50);
         prefs.flush();
     }
 
     public boolean canAddDefinition(){
-        if(prefs.getInteger("defplayed", 0) >= 20){
+        if(prefs.getInteger("defplayed", 0) >= 50){
             //prefs.putInteger("defplayed", 0);
             //prefs.flush();
             return true;

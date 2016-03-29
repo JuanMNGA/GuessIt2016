@@ -1,20 +1,17 @@
 package com.skel.game;
 
-import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.net.HttpParametersUtils;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
 import com.skel.util.Strings_I18N;
 import com.skel.util.UserInfo;
@@ -49,12 +46,13 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
     private ArrayList<Integer> categories = new ArrayList<Integer>();
     private int actualLevel = 0;
 
-    private Table scrollTable = new Table();
+    private Table scrollTable = new Table(), scrollWindow = new Table();
 
     private Window categoryWindow;
 
-    public ConfigGameScreen(MainGame g, UserInfo UInfo, Group grupo){
+    public ConfigGameScreen(MainGame g, UserInfo UInfo, Group grupo, Skin skin){
         this.g = g;
+        this.skin = skin;
         userInfo = UInfo;
         this.grupo = grupo;
         locale = new Strings_I18N(grupo.getLanguageName());
@@ -89,64 +87,64 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
         selectLevelLabel.setWrap(true);
 
         // Level buttons
-        levelOne = new TextButton("1",skin.get("group", TextButton.TextButtonStyle.class));
-        levelTwo = new TextButton("2",skin.get("group", TextButton.TextButtonStyle.class));
-        levelThree = new TextButton("3",skin.get("group", TextButton.TextButtonStyle.class));
-        levelFour = new TextButton("4",skin.get("group", TextButton.TextButtonStyle.class));
+        levelOne = new TextButton("1",skin.get("level", TextButton.TextButtonStyle.class));
+        levelTwo = new TextButton("2",skin.get("level", TextButton.TextButtonStyle.class));
+        levelThree = new TextButton("3",skin.get("level", TextButton.TextButtonStyle.class));
+        levelFour = new TextButton("4",skin.get("level", TextButton.TextButtonStyle.class));
 
         levelOne.getLabel().setAlignment(Align.center);
         levelTwo.getLabel().setAlignment(Align.center);
         levelThree.getLabel().setAlignment(Align.center);
         levelFour.getLabel().setAlignment(Align.center);
 
-        levelOne.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        levelOne.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 actualLevel = 1;
                 Gdx.app.log("cambio level",String.valueOf(actualLevel));
-                return true;
             }
         });
 
-        levelTwo.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        levelTwo.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 actualLevel = 2;
                 Gdx.app.log("cambio level",String.valueOf(actualLevel));
-                return true;
             }
         });
 
-        levelThree.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        levelThree.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 actualLevel = 3;
                 Gdx.app.log("cambio level",String.valueOf(actualLevel));
-                return true;
             }
         });
 
-        levelFour.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        levelFour.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 actualLevel = 4;
                 Gdx.app.log("cambio level",String.valueOf(actualLevel));
-                return true;
             }
         });
 
         // Button Level group
 
-        ButtonGroup levelButtonGroup = new ButtonGroup(levelOne,levelTwo,levelThree,levelFour);
+        ButtonGroup<TextButton> levelButtonGroup = new ButtonGroup<TextButton>();
+        levelButtonGroup.add(levelOne);
+        levelButtonGroup.add(levelTwo);
+        levelButtonGroup.add(levelThree);
+        levelButtonGroup.add(levelFour);
         levelButtonGroup.setMaxCheckCount(1);
         levelButtonGroup.setMinCheckCount(0);
         levelButtonGroup.setUncheckLast(true);
+        levelButtonGroup.uncheckAll();
 
         // Label Select Category
         TextButton selectCategoryLabel = new TextButton(locale.selCategory(),skin.get("default",TextButton.TextButtonStyle.class));
         selectCategoryLabel.getLabel().setAlignment(Align.center);
         selectCategoryLabel.getLabel().setWrap(true);
 
-        selectCategoryLabel.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        selectCategoryLabel.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 categoryWindow.setVisible(true);
-                return true;
             }
         });
 
@@ -172,7 +170,6 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
     public void create(){
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = utilidades.createBasicSkin();
 
         createStageActors();
     }
@@ -185,12 +182,13 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
             @Override
             public void run() {
                 StringTokenizer stroke = new StringTokenizer(Response,";");
+                ButtonGroup<TextButton> BuGr = new ButtonGroup<TextButton>();
+                int i=0;
                 while(stroke.hasMoreElements()){
                     final Integer idCat = new Integer(stroke.nextToken());
-                    final CheckBox tmpCheck = new CheckBox(stroke.nextElement().toString(),skin.get("default", CheckBox.CheckBoxStyle.class));
-                    tmpCheck.addListener(new ChangeListener() {
-                         @Override
-                         public void changed(ChangeEvent event, Actor actor) {
+                    final TextButton tmpCheck = new TextButton(stroke.nextElement().toString(),skin.get("group", TextButton.TextButtonStyle.class));
+                    tmpCheck.addListener(new ClickListener() {
+                         public void clicked(InputEvent event, float x, float y) {
                              if(categories.contains(idCat)){
                                  categories.remove(idCat);
                                  Gdx.app.log("creacion arraylist","borrado con exito");
@@ -200,43 +198,55 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
                              }
                          }
                      });
-                    categoryWindow.add(tmpCheck).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f);
-                    categoryWindow.row();
+                    tmpCheck.getLabel().setWrap(true);
+                    BuGr.add(tmpCheck);
+                    scrollWindow.add(tmpCheck).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.2f);
+                    scrollWindow.row();
+                    i++;
                 }
+
+                BuGr.setMaxCheckCount(i);
+                BuGr.setMinCheckCount(0);
+                BuGr.setUncheckLast(false);
+                BuGr.uncheckAll();
 
                 TextButton okButton = new TextButton("Ok", skin.get("default", TextButton.TextButtonStyle.class));
 
-                okButton.addListener(new InputListener(){
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                okButton.addListener(new ClickListener() {
+                    public void clicked(InputEvent event, float x, float y) {
                         categoryWindow.setVisible(false);
-                        return true;
                     }
                 });
 
-                categoryWindow.add(okButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f);
-                categoryWindow.row();
+                scrollWindow.add(okButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f);
+                scrollWindow.row();
+
+                ScrollPane scroll = new ScrollPane(scrollWindow);
+
+                final Table tableCat = new Table();
+                tableCat.add(scroll).top().center();
+
+                categoryWindow.add(tableCat);
                 categoryWindow.pack();
 
                 TextButton playButton = new TextButton(locale.play(), skin.get("default", TextButton.TextButtonStyle.class));
 
-                playButton.addListener(new InputListener(){
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+                playButton.addListener(new ClickListener() {
+                    public void clicked(InputEvent event, float x, float y) {
                         if((levelOne.isChecked() || levelTwo.isChecked() || levelThree.isChecked() || levelFour.isChecked()) && !categories.isEmpty()){
                             Gdx.app.log("configuracion","todo seleccionado");
-                            g.setScreen(new GameScreen(g,userInfo,grupo,actualLevel,categories));
+                            g.setScreen(new GameScreen(g,userInfo,grupo,actualLevel,categories, skin));
                             dispose();
                         }
-                        return true;
                     }
                 });
 
-                TextButton backButton = new TextButton(locale.back(), skin.get("default", TextButton.TextButtonStyle.class));
+                ImageTextButton backButton = new ImageTextButton(locale.back(), skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
 
-                backButton.addListener(new InputListener(){
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                        g.setScreen(new MenuGameScreen(g,userInfo,grupo));
+                backButton.addListener(new ClickListener() {
+                    public void clicked(InputEvent event, float x, float y) {
+                        g.setScreen(new MenuGameScreen(g,userInfo,grupo, skin));
                         dispose();
-                        return true;
                     }
                 });
                 scrollTable.row();
@@ -306,6 +316,6 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 }

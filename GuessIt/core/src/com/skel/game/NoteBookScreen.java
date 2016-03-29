@@ -6,6 +6,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FillViewport;
@@ -50,13 +51,12 @@ public class NoteBookScreen implements Screen {
             scroller.row();
         }
 
-        TextButton CancelButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
-        CancelButton.addListener(new InputListener() {
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+        ImageTextButton CancelButton = new ImageTextButton("Back", skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
+        CancelButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 g.setScreen(new MainScreen(g));
                 Gdx.input.setOnscreenKeyboardVisible(false);
                 dispose();
-                return true;
             }
         });
         scroller.add(CancelButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f);
@@ -76,13 +76,13 @@ public class NoteBookScreen implements Screen {
     public void create(){
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = utilidades.createBasicSkin();
 
         createStageActors();
     }
 
-    public NoteBookScreen(MainGame g){
+    public NoteBookScreen(MainGame g, Skin skin){
         this.g = g;
+        this.skin = skin;
         defSaved = Gdx.app.getPreferences("notebook");
         keys = new String[defSaved.get().size()];
         create();
@@ -124,6 +124,6 @@ public class NoteBookScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 }

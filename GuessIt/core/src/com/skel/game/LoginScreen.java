@@ -3,15 +3,11 @@ package com.skel.game;
 import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.net.HttpParametersUtils;
-import com.badlogic.gdx.scenes.scene2d.Action;
-import com.badlogic.gdx.scenes.scene2d.InputEvent;
-import com.badlogic.gdx.scenes.scene2d.InputListener;
-import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.*;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextField;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.skel.util.UserInfo;
@@ -33,7 +29,11 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     //Items de la pantalla
     Label labelLogin,labelPass;
     TextField userLogin, userPass;
-    TextButton LoginButton, backButton;
+    TextButton LoginButton;
+    ImageTextButton backButton;
+    CheckBox remember;
+
+    private Preferences prefs;
 
     MainGame g;
 
@@ -42,15 +42,17 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     Net.HttpRequest httpsolicitud;
     String httpMethod = Net.HttpMethods.POST;
 
-    public LoginScreen(MainGame g){
+    public LoginScreen(MainGame g, Skin skin){
         this.g = g;
+        this.skin = skin;
         create();
     }
 
     public void create(){
-        skin = utilidades.createBasicSkin();
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
+
+        prefs = Gdx.app.getPreferences("UserState");
 
         createStageActors();
     }
@@ -62,7 +64,8 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
         labelPass = new Label("Password",skin.get("default", Label.LabelStyle.class));
         userPass = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
         LoginButton = new TextButton("Login",skin);
-        backButton = new TextButton("Back",skin.get("default", TextButton.TextButtonStyle.class));
+        backButton = new ImageTextButton("Back",skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
+        remember = new CheckBox(" Remember me!", skin.get("default", CheckBox.CheckBoxStyle.class));
 
         //Activar caracteristicas de los actores
         //Labels
@@ -80,6 +83,13 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
         userPass.setAlignment(Align.center);
         userPass.setPasswordCharacter('*');
 
+        remember.setChecked(false);
+        if(prefs.getBoolean("remember",false)){
+            remember.setChecked(true);
+            userLogin.setText(prefs.getString("userLogin"));
+            userPass.setText(prefs.getString("userPass"));
+        }
+
         //Alineacion en la escena
         labelLogin.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.9f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
@@ -91,11 +101,11 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
 
         LoginButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
         backButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.4f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+        remember.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.3f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
         //Funciones callback
-        LoginButton.addListener(
-                new InputListener(){
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        LoginButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                         // Conexion http
                         HashMap<String, String> parameters = new HashMap<String, String>();
                         parameters.put("usuario",new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
@@ -107,16 +117,31 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
                         Gdx.net.sendHttpRequest(httpsolicitud,LoginScreen.this);
                         // Fin conexion http
-                        return true;
                     }
                 }
         );
 
-        backButton.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 g.setScreen(new MainScreen(g));
                 dispose();
-                return true;
+            }
+        });
+
+        remember.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                if(remember.isChecked()){
+                    prefs.putBoolean("remember",true);
+                    prefs.putString("userLogin", userLogin.getText());
+                    prefs.putString("userPass", userPass.getText());
+                    prefs.flush();
+                }else{
+                    prefs.putBoolean("remember",false);
+                    prefs.putString("userLogin", "");
+                    prefs.putString("userPass", "");
+                    prefs.flush();
+                }
             }
         });
 
@@ -127,6 +152,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
         stage.addActor(userPass);
         stage.addActor(LoginButton);
         stage.addActor(backButton);
+        stage.addActor(remember);
     }
 
     @Override
@@ -165,7 +191,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 
     @Override
@@ -184,7 +210,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                     UInfo.setInfo(Response);
                     //Gdx.app.log("conexion",UInfo.getName());
                     Gdx.app.log("conexion","resuelta");
-                    g.setScreen(new UserGroupsScreen(g,UInfo));
+                    g.setScreen(new UserGroupsScreen(g,UInfo, skin));
                     Gdx.input.setOnscreenKeyboardVisible(false);
                     dispose();
                 }

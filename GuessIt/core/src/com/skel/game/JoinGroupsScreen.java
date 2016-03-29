@@ -9,10 +9,8 @@ import com.badlogic.gdx.net.HttpParametersUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.ScrollPane;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -45,8 +43,9 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
 
     private Group selected_group;
 
-    public JoinGroupsScreen(MainGame g, UserInfo UInfo){
+    public JoinGroupsScreen(MainGame g, UserInfo UInfo, Skin skin){
         this.g = g;
+        this.skin = skin;
         userInfo = UInfo;
 
         create();
@@ -59,17 +58,16 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
     public void create(){
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = utilidades.createBasicSkin();
         //Llamar a connection y que devolviese el resultado de los grupos a los que el alumno ha sido validado
         createStageActors();
 
-        //HashMap<String, String> parameters = new HashMap<String, String>();
-        //parameters.put("id_usuario",String.valueOf(userInfo.getId()));
+        HashMap<String, String> parameters = new HashMap<String, String>();
+        parameters.put("id_usuario",String.valueOf(userInfo.getId()));
         String url = utilidades.getUrl()+"getGroups.php?";
         //solicitud_variables = "&nombre=suscribete&puntaje=222";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
-        //httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
+        httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
         Gdx.net.sendHttpRequest(httpsolicitud,JoinGroupsScreen.this);
     }
 
@@ -88,6 +86,7 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
         final String ResponseBefore = httpResponse.getResultAsString();
         final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
+        Gdx.app.log("respuesta", Response);
         if(groupIsSelected){
             Gdx.app.postRunnable(new Runnable() {
                 @Override
@@ -110,15 +109,15 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
                             tmpTButton.setText(groupName + " - " + teacherName);
                             tmpTButton.getLabel().setAlignment(Align.center);
                             tmpTButton.getLabel().setWrap(true);
+                            tmpTButton.getLabelCell().padLeft(10f).padTop(10f).padRight(10f).padBottom(10f);
                             // Añadir el funcionamiento de cada boton
-                            tmpTButton.addListener(new InputListener() {
-                                public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                            tmpTButton.addListener(new ClickListener() {
+                                public void clicked(InputEvent event, float x, float y) {
                                     Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang, "");
                                     selected_group = grupo;
                                     groupIsSelected = true;
                                     tmpTButton.setVisible(false);
                                     sendGroupInvite(grupo);
-                                    return true;
                                 }
                             });
                             ScrollTable.add(tmpTButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.15f);
@@ -126,31 +125,30 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
                         }
                         Gdx.app.log("conexion", "tabla creada");
 
-                        // Boton cancelar para volver a la ventana anterior
-                        TextButton CancelButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
-                        CancelButton.addListener(new InputListener() {
-                            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
-                                g.setScreen(new UserGroupsScreen(g, userInfo));
-                                dispose();
-                                return true;
-                            }
-                        });
-                        ScrollTable.add(CancelButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f);
-                        ScrollTable.row();
-
-                        ScrollPane scroller = new ScrollPane(ScrollTable);
-                        Gdx.app.log("conexion", "scroll creado");
-
-                        final Table table = new Table();
-                        table.setFillParent(true);
-                        table.add(scroller).fill().expand();
-
-                        //Anadimos la tabla al stage
-                        stage.addActor(table);
                         Gdx.app.log("conexion", "tabla grupos creada");
                     } else {
                         Gdx.app.log("conexion", "ningun resultado");
                     }
+                    // Boton cancelar para volver a la ventana anterior
+                    ImageTextButton CancelButton = new ImageTextButton("Back", skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
+                    CancelButton.addListener(new ClickListener() {
+                        public void clicked(InputEvent event, float x, float y) {
+                            g.setScreen(new UserGroupsScreen(g, userInfo, skin));
+                            dispose();
+                        }
+                    });
+                    ScrollTable.add(CancelButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f);
+                    ScrollTable.row();
+
+                    ScrollPane scroller = new ScrollPane(ScrollTable);
+                    Gdx.app.log("conexion", "scroll creado");
+
+                    final Table table = new Table();
+                    table.setFillParent(true);
+                    table.add(scroller).fill().expand();
+
+                    //Anadimos la tabla al stage
+                    stage.addActor(table);
                 }
             });
         }
@@ -202,6 +200,6 @@ public class JoinGroupsScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 }

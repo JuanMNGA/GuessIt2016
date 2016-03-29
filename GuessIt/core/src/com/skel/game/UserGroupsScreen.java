@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -42,8 +43,9 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
 
     private Group selected_group;
 
-    public UserGroupsScreen(MainGame g, UserInfo UInfo) {
+    public UserGroupsScreen(MainGame g, UserInfo UInfo, Skin skin) {
         this.g = g;
+        this.skin = skin;
         userInfo = UInfo;
         create();
     }
@@ -54,19 +56,17 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
 
         // Search icon
         ImageButton searchIcon = new ImageButton(skin.get("search_icon", ImageButton.ImageButtonStyle.class));
-        searchIcon.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        searchIcon.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("botones","search pulsado");
-                return true;
             }
         });
         // Join icon
         ImageTextButton joinIcon = new ImageTextButton("   Join group", skin.get("join_icon", ImageTextButton.ImageTextButtonStyle.class));
-        joinIcon.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
+        joinIcon.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
                 Gdx.app.log("botones","join pulsado");
-                g.setScreen(new JoinGroupsScreen(g,userInfo));
-                return true;
+                g.setScreen(new JoinGroupsScreen(g,userInfo, skin));
             }
         });
 
@@ -93,7 +93,6 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
     public void create(){
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = utilidades.createBasicSkin();
 
         createStageActors();
         //Llamar a connection y que devolviese el resultado de los grupos a los que el alumno ha sido validado
@@ -146,7 +145,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 
     @Override
@@ -165,20 +164,20 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                         final String teacherName = stroker.nextElement().toString();
                         final int iGroupLang = Integer.parseInt(stroker.nextElement().toString());
                         final String sGroupLang = stroker.nextToken();
-                        tmpTButton.setText(groupName + " - " + teacherName);
+                        final int cantidad = Integer.parseInt(stroker.nextToken());
+                        tmpTButton.setText(groupName + " - " + teacherName + " - " + String.valueOf(cantidad));
                         tmpTButton.getLabel().setAlignment(Align.center);
                         tmpTButton.getLabel().setWrap(true);
+                        tmpTButton.getLabelCell().padLeft(10f).padTop(10f).padRight(10f).padBottom(10f);
                         // Añadir el funcionamiento de cada boton
-                        tmpTButton.addListener(new InputListener() {
-                            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button) {
+                        tmpTButton.addListener(new ClickListener() {
+                            public void clicked(InputEvent event, float x, float y) {
                                 Group grupo = new Group(iGroupId, groupName, teacherName, iGroupLang, sGroupLang);
                                 selected_group = grupo;
-                                g.setScreen(new MenuGameScreen(g,userInfo,selected_group));
+                                g.setScreen(new MenuGameScreen(g,userInfo,selected_group, skin));
                                 dispose();
                                 Gdx.app.log("probando grupo", grupo.getName());
                                 // Llamada a nueva screen con la info del grupo
-
-                                return true;
                             }
                         });
                         ScrollTable.add(tmpTButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.15f);
@@ -198,22 +197,20 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                     Gdx.app.log("conexion", "ningun resultado");
                 }
 
-                TextButton backButton = new TextButton("Back", skin.get("default", TextButton.TextButtonStyle.class));
-                backButton.addListener(new InputListener(){
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                        g.setScreen(new LoginScreen(g));
+                ImageTextButton backButton = new ImageTextButton("Back", skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
+                backButton.addListener(new ClickListener() {
+                    public void clicked(InputEvent event, float x, float y) {
+                        g.setScreen(new LoginScreen(g, skin));
                         dispose();
-                        return true;
                     }
                 });
                 ScrollTable.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);
                 ScrollTable.row();
                 TextButton refreshButton = new TextButton("Refresh", skin.get("default", TextButton.TextButtonStyle.class));
-                refreshButton.addListener(new InputListener(){
-                    public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                        g.setScreen(new UserGroupsScreen(g,userInfo));
+                refreshButton.addListener(new ClickListener() {
+                    public void clicked(InputEvent event, float x, float y) {
+                        g.setScreen(new UserGroupsScreen(g,userInfo, skin));
                         dispose();
-                        return true;
                     }
                 });
                 ScrollTable.add(refreshButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(2);

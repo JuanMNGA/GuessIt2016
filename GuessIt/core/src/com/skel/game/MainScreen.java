@@ -13,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
@@ -68,27 +69,24 @@ public class MainScreen implements Screen {
 
 		// Funciones callback
 
-		newGameButton.addListener(new InputListener(){
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				g.setScreen(new LoginScreen(g));
+		newGameButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				g.setScreen(new LoginScreen(g, skin));
 				dispose();
-				return true;
 			}
 		});
 
-		registerButton.addListener(new InputListener(){
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				g.setScreen(new RegisterScreen(g));
+		registerButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				g.setScreen(new RegisterScreen(g, skin));
 				dispose();
-				return true;
 			}
 		});
 
-		notebookButton.addListener(new InputListener(){
-			public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-				g.setScreen(new NoteBookScreen(g));
+		notebookButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				g.setScreen(new NoteBookScreen(g, skin));
 				dispose();
-				return true;
 			}
 		});
 
@@ -144,6 +142,6 @@ public class MainScreen implements Screen {
 	@Override
 	public void dispose() {
 		stage.dispose();
-		skin.dispose();
+		//skin.dispose();
 	}
 }

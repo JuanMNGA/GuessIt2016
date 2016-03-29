@@ -26,15 +26,15 @@ public class GEngine {
 
     public String getPhrase(){
         // Hacer la transformacion de "Palabra" por "********"
-        return engine_definitions.get(current_def).getFrase().replace(engine_definitions.get(current_def).getPalabra(),"*****");
+        return engine_definitions.get(current_def).getFrase().replaceFirst("\\b"+engine_definitions.get(current_def).getPalabra()+"\\b","*****");
     }
 
     public String getPassPhrase(){
-        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replace(engine_definitions.get(current_def).getPalabra(), "[GREEN]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
+        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replaceFirst("\\b"+engine_definitions.get(current_def).getPalabra()+"\\b", "[GREEN]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
     }
 
     public String getWrongPhrase(){
-        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replace(engine_definitions.get(current_def).getPalabra(), "[RED]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
+        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replaceFirst("\\b"+engine_definitions.get(current_def).getPalabra()+"\\b", "[RED]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
     }
 
     public String getResultPhrase(){

@@ -7,9 +7,11 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.skel.util.Group;
@@ -34,7 +36,7 @@ public class MenuGameScreen implements Screen {
     public void createStageActors(){
         TextButton playButton = new TextButton(locale.play(), skin.get("default", TextButton.TextButtonStyle.class));
         TextButton statsButton = new TextButton(locale.stats(), skin.get("default", TextButton.TextButtonStyle.class));
-        TextButton backButton = new TextButton(locale.back(), skin.get("default", TextButton.TextButtonStyle.class));
+        ImageTextButton backButton = new ImageTextButton(locale.back(), skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
         TextButton newDefButton = new TextButton(locale.addDef(), skin.get("default", TextButton.TextButtonStyle.class));
 
         playButton.getLabel().setWrap(true);
@@ -48,35 +50,31 @@ public class MenuGameScreen implements Screen {
             newDefButton.setVisible(false);
         }
 
-        playButton.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                g.setScreen(new ConfigGameScreen(g,userInfo, grupo));
+        playButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                g.setScreen(new ConfigGameScreen(g,userInfo, grupo, skin));
                 dispose();
-                return true;
             }
         });
 
-        statsButton.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                g.setScreen(new StatsScreen(g, userInfo, grupo));
+        statsButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                g.setScreen(new StatsScreen(g, userInfo, grupo, skin));
                 dispose();
-                return true;
             }
         });
 
-        newDefButton.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                g.setScreen(new NewDefScreen(g, userInfo, grupo));
+        newDefButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                g.setScreen(new NewDefScreen(g, userInfo, grupo, skin));
                 dispose();
-                return true;
             }
         });
 
-        backButton.addListener(new InputListener(){
-            public boolean touchDown(InputEvent event, float x, float y, int pointer, int button){
-                g.setScreen(new UserGroupsScreen(g, userInfo));
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                g.setScreen(new UserGroupsScreen(g, userInfo, skin));
                 dispose();
-                return true;
             }
         });
 
@@ -101,13 +99,13 @@ public class MenuGameScreen implements Screen {
     public void create(){
         stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
         Gdx.input.setInputProcessor(stage);
-        skin = utilidades.createBasicSkin();
 
         createStageActors();
     }
 
-    public MenuGameScreen(MainGame g, UserInfo UInfo, Group grupo){
+    public MenuGameScreen(MainGame g, UserInfo UInfo, Group grupo, Skin skin){
         this.g = g;
+        this.skin = skin;
         userInfo = UInfo;
         this.grupo = grupo;
         locale = new Strings_I18N(grupo.getLanguageName());
@@ -149,6 +147,6 @@ public class MenuGameScreen implements Screen {
     @Override
     public void dispose() {
         stage.dispose();
-        skin.dispose();
+        //skin.dispose();
     }
 }

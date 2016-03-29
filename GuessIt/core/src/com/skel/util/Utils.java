@@ -49,20 +49,22 @@ public class Utils {
         Skin tmpSkin = new Skin();
         //Add font
         if(Gdx.app.getType() == Application.ApplicationType.Android) {
-            tmpSkin.add("default", CreateFont((int) (30 * Gdx.graphics.getDensity()), Color.WHITE));
+            tmpSkin.add("default", CreateFont((int) (20 * Gdx.graphics.getDensity()), Color.WHITE));
             tmpSkin.add("textfield", CreateFont((int) (30 * Gdx.graphics.getDensity()), Color.BLACK));
             tmpSkin.add("textfield_s", CreateFont((int)(20 * Gdx.graphics.getDensity()), Color.BLACK));
             tmpSkin.add("label", CreateFont((int) (30 * Gdx.graphics.getDensity()), Color.BLACK));
             tmpSkin.add("group", CreateFont((int) (20 * Gdx.graphics.getDensity()), Color.WHITE));
             tmpSkin.add("point", CreateFont((int) (80 * Gdx.graphics.getDensity()), Color.BLACK));
+            tmpSkin.add("defLabel", CreateFont((int) (10 * Gdx.graphics.getDensity()), Color.WHITE));
         }else{
             if(Gdx.app.getType() == Application.ApplicationType.Desktop){
-                tmpSkin.add("default", CreateFont(30 , Color.WHITE));
+                tmpSkin.add("default", CreateFont(20 , Color.WHITE));
                 tmpSkin.add("textfield", CreateFont(30 , Color.BLACK));
                 tmpSkin.add("textfield_s", CreateFont(20 , Color.BLACK));
                 tmpSkin.add("label", CreateFont(30 , Color.BLACK));
                 tmpSkin.add("group", CreateFont(20 , Color.WHITE));
                 tmpSkin.add("point", CreateFont(80 , Color.BLACK));
+                tmpSkin.add("defLabel", CreateFont(10 , Color.WHITE));
             }
         }
         tmpSkin.addRegions(basic_atlas);
@@ -76,12 +78,22 @@ public class Utils {
         tmpSkin.add("default",tbStyle);
         // TextButton groups
         tbStyle = new TextButton.TextButtonStyle();
+        tbStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("basic_group_idle"));
+        tbStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("basic_group_push"));
+        tbStyle.checked = new TextureRegionDrawable(tmpSkin.getRegion("basic_group_push"));
+        tbStyle.over = new TextureRegionDrawable(tmpSkin.getRegion("basic_group_push"));
+        tbStyle.font = tmpSkin.getFont("group");
+        tbStyle.fontColor = Color.BLACK;
+        tmpSkin.add("group",tbStyle);
+        // Level
+        tbStyle = new TextButton.TextButtonStyle();
         tbStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_idle"));
         tbStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
         tbStyle.checked = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
         tbStyle.over = new TextureRegionDrawable(tmpSkin.getRegion("basic_button_push"));
         tbStyle.font = tmpSkin.getFont("group");
-        tmpSkin.add("group",tbStyle);
+        tbStyle.fontColor = Color.WHITE;
+        tmpSkin.add("level",tbStyle);
         // TextButton points
         tbStyle = new TextButton.TextButtonStyle();
         tbStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("puntuacion"));
@@ -101,21 +113,43 @@ public class Utils {
         //Label Style
         Label.LabelStyle lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
+        lStyle.background.setLeftWidth(5f);
+        lStyle.background.setRightWidth(5f);
         lStyle.font = tmpSkin.getFont("label");
         //tmpSkin.getFont("label").getData().markupEnabled = true;
         tmpSkin.add("default",lStyle);
+
+        lStyle = new Label.LabelStyle();
+        lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_stats_label"));
+        lStyle.background.setLeftWidth(5f);
+        lStyle.background.setRightWidth(5f);
+        lStyle.font = tmpSkin.getFont("group");
+        lStyle.fontColor = Color.BLACK;
+        //tmpSkin.getFont("label").getData().markupEnabled = true;
+        tmpSkin.add("stats",lStyle);
         // Puntuacion style
         lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
+        lStyle.background.setLeftWidth(5f);
+        lStyle.background.setRightWidth(5f);
         lStyle.font = tmpSkin.getFont("point");
-        //tmpSkin.getFont("point").getData().markupEnabled = true;
         tmpSkin.add("point", lStyle);
         // Small Label
         lStyle = new Label.LabelStyle();
         lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_label"));
+        lStyle.background.setLeftWidth(5f);
+        lStyle.background.setRightWidth(5f);
         lStyle.font = tmpSkin.getFont("group");
         lStyle.fontColor = Color.BLACK;
         tmpSkin.add("small", lStyle);
+
+        lStyle = new Label.LabelStyle();
+        lStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_question_label"));
+        lStyle.background.setLeftWidth(5f);
+        lStyle.background.setRightWidth(5f);
+        lStyle.font = tmpSkin.getFont("label");
+        //tmpSkin.getFont("label").getData().markupEnabled = true;
+        tmpSkin.add("question",lStyle);
         //TextArea Style
         TextField.TextFieldStyle tfStyle = new TextField.TextFieldStyle();
         tfStyle.background = new TextureRegionDrawable(tmpSkin.getRegion("basic_text_area"));
@@ -123,6 +157,8 @@ public class Utils {
         tfStyle.font = tmpSkin.getFont("textfield_s");
         tfStyle.fontColor = Color.BLACK;
         tfStyle.cursor = new TextureRegionDrawable(tmpSkin.getRegion("cursor"));
+        tfStyle.background.setLeftWidth(5f);
+        tfStyle.background.setRightWidth(5f);
         tmpSkin.add("default",tfStyle);
         // ImageButton Style
         // Search Icon
@@ -144,7 +180,7 @@ public class Utils {
         cbStyle = new CheckBox.CheckBoxStyle();
         cbStyle.checkboxOff = new TextureRegionDrawable(tmpSkin.getRegion("uncheck"));
         cbStyle.checkboxOn = new TextureRegionDrawable(tmpSkin.getRegion("check"));
-        cbStyle.font = tmpSkin.getFont("default");
+        cbStyle.font = tmpSkin.getFont("textfield_s");
         cbStyle.fontColor = Color.BLACK;
         tmpSkin.add("questions",cbStyle);
         //Window Style
@@ -159,7 +195,7 @@ public class Utils {
         itStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("report"));
         itStyle.checked = null;
         itStyle.over = null;
-        itStyle.font = tmpSkin.getFont("default");
+        itStyle.font = tmpSkin.getFont("label");
         itStyle.fontColor = Color.BLACK;
         tmpSkin.add("report",itStyle);
         //
@@ -171,6 +207,33 @@ public class Utils {
         itStyle.font = tmpSkin.getFont("default");
         itStyle.fontColor = Color.BLACK;
         tmpSkin.add("join_icon",itStyle);
+
+        itStyle = new ImageTextButton.ImageTextButtonStyle();
+        itStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("basic_back_button"));
+        itStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("basic_back_button_p"));
+        itStyle.checked = null;
+        itStyle.over = null;
+        itStyle.font = tmpSkin.getFont("default");
+        itStyle.fontColor = Color.WHITE;
+        tmpSkin.add("back",itStyle);
+
+        itStyle = new ImageTextButton.ImageTextButtonStyle();
+        itStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("basic_send_button"));
+        itStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("basic_send_button"));
+        itStyle.checked = null;
+        itStyle.over = null;
+        itStyle.font = tmpSkin.getFont("default");
+        itStyle.fontColor = Color.WHITE;
+        tmpSkin.add("send",itStyle);
+
+        itStyle = new ImageTextButton.ImageTextButtonStyle();
+        itStyle.up = new TextureRegionDrawable(tmpSkin.getRegion("basic_save_button"));
+        itStyle.down = new TextureRegionDrawable(tmpSkin.getRegion("basic_save_button"));
+        itStyle.checked = null;
+        itStyle.over = null;
+        itStyle.font = tmpSkin.getFont("default");
+        itStyle.fontColor = Color.WHITE;
+        tmpSkin.add("save",itStyle);
         //
         return tmpSkin;
     }
@@ -179,10 +242,10 @@ public class Utils {
         TextureAtlas basic_atlas = new TextureAtlas(Gdx.files.internal("images_packed/basic.atlas"));
         Skin tmpSkin = new Skin();
         if(Gdx.app.getType() == Application.ApplicationType.Android) {
-            tmpSkin.add("result", CreateResultFont((int) (30 * Gdx.graphics.getDensity())));
+            tmpSkin.add("result", CreateResultFont((int) (20 * Gdx.graphics.getDensity())));
         }else{
             if(Gdx.app.getType() == Application.ApplicationType.Desktop){
-                tmpSkin.add("result", CreateResultFont(30));
+                tmpSkin.add("result", CreateResultFont(20));
             }
         }
         tmpSkin.addRegions(basic_atlas);
