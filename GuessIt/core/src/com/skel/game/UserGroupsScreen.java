@@ -1,9 +1,6 @@
 package com.skel.game;
 
-import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Net;
-import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.*;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.net.HttpParametersUtils;
@@ -91,8 +88,19 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
     }
 
     public void create(){
-        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.BACK) {
+                    g.setScreen(new LoginScreen(g, skin));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
+                    dispose();
+                }
+                return super.keyDown(keyCode);
+            }
+        };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
         //Llamar a connection y que devolviese el resultado de los grupos a los que el alumno ha sido validado
@@ -117,7 +125,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         stage.act(delta);
         stage.draw();
     }
@@ -165,7 +173,7 @@ public class UserGroupsScreen implements Screen, Net.HttpResponseListener {
                         final int iGroupLang = Integer.parseInt(stroker.nextElement().toString());
                         final String sGroupLang = stroker.nextToken();
                         final int cantidad = Integer.parseInt(stroker.nextToken());
-                        tmpTButton.setText(groupName + " - " + teacherName + " - " + String.valueOf(cantidad));
+                        tmpTButton.setText(groupName + " - " + teacherName + " (" + String.valueOf(cantidad) + ") ");
                         tmpTButton.getLabel().setAlignment(Align.center);
                         tmpTButton.getLabel().setWrap(true);
                         tmpTButton.getLabelCell().padLeft(10f).padTop(10f).padRight(10f).padBottom(10f);

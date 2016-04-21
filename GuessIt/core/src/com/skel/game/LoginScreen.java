@@ -15,6 +15,7 @@ import com.skel.util.Utils;
 
 import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.StringTokenizer;
 
 /**
  * Created by juanm on 27/01/2016.
@@ -27,9 +28,9 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     Skin skin;
 
     //Items de la pantalla
-    Label labelLogin,labelPass;
+    Label labelLogin,labelPass, errorLabel;
     TextField userLogin, userPass;
-    TextButton LoginButton;
+    TextButton LoginButton, okButton;
     ImageTextButton backButton;
     CheckBox remember;
 
@@ -42,6 +43,8 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     Net.HttpRequest httpsolicitud;
     String httpMethod = Net.HttpMethods.POST;
 
+    private Window errorWindow;
+
     public LoginScreen(MainGame g, Skin skin){
         this.g = g;
         this.skin = skin;
@@ -49,15 +52,39 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     }
 
     public void create(){
-        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.BACK) {
+                    g.setScreen(new MainScreen(g));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
+                    dispose();
+                }
+                return super.keyDown(keyCode);
+            }
+        };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         prefs = Gdx.app.getPreferences("UserState");
-
+        //prefs.putInteger("14",50);
+        //prefs.flush();
         createStageActors();
     }
 
     public void createStageActors(){
+
+        Table table = new Table();
+
+        errorWindow = new Window("Login error!", skin.get("default", Window.WindowStyle.class));
+        errorWindow.setMovable(false);
+        errorWindow.setFillParent(true);
+        errorWindow.padTop(Gdx.graphics.getHeight()*0.05f);
+        errorWindow.getTitleLabel().setAlignment(Align.center);
+        errorWindow.getTitleLabel().setWrap(true);
+        errorWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        errorWindow.setVisible(false);
+
         //Creacion de los elementos de la pantalla
         labelLogin = new Label("Email",skin.get("default", Label.LabelStyle.class));
         userLogin = new TextField("", skin.get("default",TextField.TextFieldStyle.class));
@@ -76,6 +103,15 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
 
         //Text Fields
         userLogin.setAlignment(Align.center);
+
+        userLogin.addListener(new InputListener(){
+            public boolean keyTyped (InputEvent event, char character) {
+                super.keyTyped(event,character);
+                prefs.putString("userLogin",userLogin.getText());
+                prefs.flush();
+                return true;
+            }
+        });
         //userLogin.setMessageText("User");
 
         userPass.setPasswordMode(true);
@@ -83,26 +119,23 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
         userPass.setAlignment(Align.center);
         userPass.setPasswordCharacter('*');
 
-        remember.setChecked(false);
+        userPass.addListener(new InputListener(){
+            public boolean keyTyped (InputEvent event, char character) {
+                super.keyTyped(event,character);
+                prefs.putString("userPass",userPass.getText());
+                prefs.flush();
+                return true;
+            }
+        });
+
+        userLogin.setText(prefs.getString("userLogin",""));
+        userPass.setText(prefs.getString("userPass",""));
+
+        /*remember.setChecked(false);
         if(prefs.getBoolean("remember",false)){
             remember.setChecked(true);
-            userLogin.setText(prefs.getString("userLogin"));
-            userPass.setText(prefs.getString("userPass"));
-        }
 
-        //Alineacion en la escena
-        labelLogin.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.9f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-
-        userLogin.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.8f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-
-        labelPass.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.7f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-
-        userPass.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.6f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-
-        LoginButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-        backButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.4f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-        remember.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.3f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
-
+        }*/
         //Funciones callback
         LoginButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
@@ -110,7 +143,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                         HashMap<String, String> parameters = new HashMap<String, String>();
                         parameters.put("usuario",new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
                         parameters.put("password",new String(userPass.getText().getBytes(), Charset.forName("UTF-8")));
-                        String url = utilidades.getUrl()+"login.php?";
+                        String url = utilidades.getUrl()+"login2.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";
                         httpsolicitud = new Net.HttpRequest(httpMethod);
                         httpsolicitud.setUrl(url);
@@ -146,13 +179,43 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
         });
 
         //Anadimos actores al stage
-        stage.addActor(labelLogin);
-        stage.addActor(userLogin);
-        stage.addActor(labelPass);
-        stage.addActor(userPass);
-        stage.addActor(LoginButton);
-        stage.addActor(backButton);
-        stage.addActor(remember);
+        table.add(labelLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        table.row();
+        table.add(userLogin).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        table.row();
+        table.add(labelPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        table.row();
+        table.add(userPass).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        table.row();
+        table.add(LoginButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        table.row();
+        table.add(backButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        table.row();
+        table.pack();
+
+        final Table tabla = new Table();
+        tabla.setFillParent(true);
+        tabla.add(table).expand().top();
+        stage.addActor(tabla);
+
+        okButton = new TextButton("Ok!", skin.get("default", TextButton.TextButtonStyle.class));
+        errorLabel = new Label("", skin.get("default", Label.LabelStyle.class));
+        errorLabel.setWrap(true);
+
+        okButton.addListener(new ClickListener(){
+            public void clicked(InputEvent event, float x, float y) {
+                errorWindow.setVisible(false);
+            }
+        });
+
+        errorWindow.add(errorLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.2f);
+        errorWindow.row();
+        errorWindow.add(okButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        errorWindow.row();
+        errorWindow.pack();
+
+        stage.addActor(errorWindow);
+        //stage.addActor(remember);
     }
 
     @Override
@@ -163,7 +226,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         stage.act(delta);
         stage.draw();
     }
@@ -198,6 +261,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
     public void handleHttpResponse(Net.HttpResponse httpResponse) {
         final String ResponseBefore = httpResponse.getResultAsString();
         final String Response = new String(ResponseBefore.getBytes(), Charset.forName("UTF-8"));
+        Gdx.app.log("conexion", Response);
         Gdx.app.postRunnable(new Runnable() {
             @Override
             public void run() {
@@ -207,12 +271,23 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                     Gdx.input.setOnscreenKeyboardVisible(false);
                     dispose();
                 }else {
-                    UInfo.setInfo(Response);
-                    //Gdx.app.log("conexion",UInfo.getName());
-                    Gdx.app.log("conexion","resuelta");
-                    g.setScreen(new UserGroupsScreen(g,UInfo, skin));
-                    Gdx.input.setOnscreenKeyboardVisible(false);
-                    dispose();
+                    StringTokenizer stroker = new StringTokenizer(Response,"|");
+                    while(stroker.hasMoreTokens()) {
+                        String responseType = stroker.nextToken();
+                        Gdx.app.log("conexion error type", responseType);
+                        if(responseType.equals("1")) {
+                            UInfo.setInfo(stroker.nextToken());
+                            //Gdx.app.log("conexion",UInfo.getName());
+                            Gdx.app.log("conexion", "resuelta");
+                            g.setScreen(new UserGroupsScreen(g, UInfo, skin));
+                            Gdx.input.setOnscreenKeyboardVisible(false);
+                            dispose();
+                        }else{
+                            String responseFailure = stroker.nextToken();
+                            errorLabel.setText(responseFailure);
+                            errorWindow.setVisible(true);
+                        }
+                    }
                 }
             }
         });

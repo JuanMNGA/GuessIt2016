@@ -27,6 +27,8 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     Stage stage;
     Skin skin;
 
+    private Preferences defSaved;
+
     //Items de la pantalla
     Label labelLogin,labelPass,labelName,labelLastname,labelEmail;
     TextField userLogin, userPass, userName, userLastname, userEmail;
@@ -47,12 +49,24 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     public RegisterScreen(MainGame g, Skin skin){
         this.g = g;
         this.skin = skin;
+        defSaved = Gdx.app.getPreferences("UserState");
         create();
     }
 
     public void create(){
-        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+                public boolean keyDown(int keyCode) {
+                    if (keyCode == Input.Keys.BACK) {
+                        g.setScreen(new MainScreen(g));
+                        Gdx.input.setOnscreenKeyboardVisible(false);
+                        dispose();
+                    }
+                    return super.keyDown(keyCode);
+                }
+            };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
     }
@@ -119,9 +133,27 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
         //Text Fields
         userLogin.setAlignment(Align.center);
 
+        userLogin.addListener(new InputListener(){
+            public boolean keyTyped (InputEvent event, char character) {
+                super.keyTyped(event,character);
+                defSaved.putString("userLogin",userLogin.getText());
+                defSaved.flush();
+                return true;
+            }
+        });
+
         userPass.setPasswordMode(true);
         userPass.setAlignment(Align.center);
         userPass.setPasswordCharacter('*');
+
+        userPass.addListener(new InputListener(){
+            public boolean keyTyped (InputEvent event, char character) {
+                super.keyTyped(event,character);
+                defSaved.putString("userPass",userPass.getText());
+                defSaved.flush();
+                return true;
+            }
+        });
 
         userName.setAlignment(Align.center);
 
@@ -223,7 +255,7 @@ public class RegisterScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         stage.act(delta);
         stage.draw();
     }

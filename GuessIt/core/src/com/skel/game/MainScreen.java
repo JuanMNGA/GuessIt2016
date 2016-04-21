@@ -50,7 +50,7 @@ public class MainScreen implements Screen {
 		aboutButton = new TextButton("Credits",skin);
 		registerButton = new TextButton("Register",skin);
 		notebookButton = new TextButton("Notebook", skin.get("default", TextButton.TextButtonStyle.class));
-		lab = new Label("GuessIt! Language Trainer",skin.get("default", Label.LabelStyle.class)); //Tomar como ejemplo para seleccionar skins diferentes.
+		lab = new Label("",skin.get("logo", Label.LabelStyle.class)); //Tomar como ejemplo para seleccionar skins diferentes.
 
 		// Posicionamiento
 		newGameButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.5f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
@@ -61,7 +61,7 @@ public class MainScreen implements Screen {
 
 		notebookButton.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.2f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
 
-		lab.setBounds(Gdx.graphics.getWidth()*0.1f, Gdx.graphics.getHeight()*0.8f,Gdx.graphics.getWidth()*0.8f,Gdx.graphics.getHeight()*0.1f);
+		lab.setBounds(Gdx.graphics.getWidth()*0.2f, Gdx.graphics.getHeight()*0.6f,Gdx.graphics.getWidth()*0.6f,Gdx.graphics.getHeight()*0.4f);
 
 		//Activar caracteristicas
 		lab.setWrap(true);
@@ -101,6 +101,7 @@ public class MainScreen implements Screen {
 	public void create () {
 		stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
 		Gdx.input.setInputProcessor(stage);
+		Gdx.input.setCatchBackKey(false);
 		//Setting up Basic Skin (default skin)
 		skin = utilidades.createBasicSkin();
 
@@ -110,7 +111,7 @@ public class MainScreen implements Screen {
 	@Override
 	public void render (float delta) {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+		Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
 		stage.act(delta);
 		stage.draw();
 	}

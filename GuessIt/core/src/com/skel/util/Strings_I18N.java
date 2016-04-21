@@ -25,11 +25,11 @@ public class Strings_I18N {
             preguntas.add(spaces + "Pregunta 4");
         }else{
             if(language.equals("German")){
-                preguntas.add(spaces + "Ist das Verb korrekt konjugiert?");
+                preguntas.add(spaces + "Sind die Verben korrekt konjugiert?");
                 preguntas.add(spaces + "Sind die Substantive groß geschrieben?");
-                preguntas.add(spaces + "Ist das Verb an der korrekten Stelle?");
-                preguntas.add(spaces + "Ist die Präposition korrekt?");
-                preguntas.add(spaces + "Ist der Artikel des Substantivs korrekt?");
+                preguntas.add(spaces + "Sind die Verben an der korrekten Stelle?");
+                preguntas.add(spaces + "Sind die Präpositionen korrekt?");
+                preguntas.add(spaces + "Sind die Artikel der Substantive korrekt?");
             }else{
                 if(language.equals("Spanish")){
                     preguntas.add(spaces + "¿El verbo está bien conjugado?");

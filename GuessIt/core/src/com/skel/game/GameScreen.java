@@ -125,6 +125,15 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         hintWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
         hintWindow.setVisible(false);
 
+        final Window savedWindow = new Window("", skin.get("default", Window.WindowStyle.class));
+        savedWindow.setMovable(false);
+        savedWindow.setFillParent(true);
+        savedWindow.padTop(Gdx.graphics.getHeight()*0.05f);
+        savedWindow.getTitleLabel().setAlignment(Align.center);
+        savedWindow.getTitleLabel().setWrap(true);
+        savedWindow.setSize(Gdx.graphics.getWidth(),Gdx.graphics.getHeight());
+        savedWindow.setVisible(false);
+
         // Add window actors
         // Label
         final Label finalPoints = new Label("", skin.get("point", Label.LabelStyle.class));
@@ -193,7 +202,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                     Gdx.app.log("puntuacion", "enviada");
                     rateWindow.setVisible(false);
                     if (acierto == 1)
-                        userInfo.addDefPlayed();
+                        userInfo.addDefPlayed(String.valueOf(grupo.getId()));
                     sendRate();
                     numIntentos = 3;
                     tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
@@ -214,6 +223,8 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                 Preferences tmpPrefs = Gdx.app.getPreferences("notebook");
                 tmpPrefs.putString(defToSave,"");
                 tmpPrefs.flush();
+                rateWindow.setVisible(false);
+                savedWindow.setVisible(true);
             }
         });
         rateWindow.add(resultDefLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.3f).colspan(2);
@@ -241,7 +252,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
             }
         });
 
-        TextButton backMenu = new TextButton(locale.backMenu(), skin.get("default", TextButton.TextButtonStyle.class));
+        final TextButton backMenu = new TextButton(locale.backMenu(), skin.get("default", TextButton.TextButtonStyle.class));
         backMenu.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
                 g.setScreen(new MenuGameScreen(g,userInfo, grupo, skin));
@@ -307,9 +318,26 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         reportReasonWindow.row();
         reportReasonWindow.add(difficult).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
         reportReasonWindow.row();
+        reportReasonWindow.add().height(Gdx.graphics.getHeight()*0.1f);
+        reportReasonWindow.row();
         reportReasonWindow.add(backReport).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
         reportReasonWindow.row();
         reportReasonWindow.pack();
+
+        Label saved = new Label("Word Saved!", skin.get("default", Label.LabelStyle.class));
+        TextButton okButton = new TextButton("Ok", skin.get("default", TextButton.TextButtonStyle.class));
+        okButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                savedWindow.setVisible(false);
+                rateWindow.setVisible(true);
+            }
+        });
+
+        savedWindow.add(saved).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        savedWindow.row();
+        savedWindow.add(okButton).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
+        savedWindow.row();
+        savedWindow.pack();
 
         // Main Game Actors
         definitionLabel = new Label("",skin.get("small", Label.LabelStyle.class));
@@ -325,7 +353,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         layoutTable.add(answerLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f).colspan(3);
         layoutTable.row();
 
-        articleLabel = new Label("", skin.get("default", Label.LabelStyle.class));
+        articleLabel = new Label("", sec_Skin.get("article", Label.LabelStyle.class));
         articleLabel.setAlignment(Align.center);
 
         answerText = new TextField("", skin.get("default", TextField.TextFieldStyle.class));
@@ -356,7 +384,23 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                         definitionLabel.setText(engine.getPhrase());
                         hintLabel.setText(engine.getHint());
                         hintLabel.setVisible(false);
-                        articleLabel.setText(engine.getArticle());
+                        String color = "";
+                        if(engine.getArticle().equals("das") || engine.getArticle().equals(" das") || engine.getArticle().equals(" das ") || engine.getArticle().equals("das ")){
+                            color = "[BLUE]";
+                        }else{
+                            if(engine.getArticle().equals("der") || engine.getArticle().equals(" der") || engine.getArticle().equals(" der ") || engine.getArticle().equals("der ")){
+                                color = "[RED]";
+                            }else{
+                                if(engine.getArticle().equals("die") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                    color = "[OLIVE]";
+                                }else{
+                                    if(engine.getArticle().equals("der/ die Pl.") || engine.getArticle().equals(" der/ die Pl.") || engine.getArticle().equals("der/ die Pl. ")){
+                                        color = "[VIOLET]";
+                                    }
+                                }
+                            }
+                        }
+                        articleLabel.setText(color + engine.getArticle());
                         answerText.setText("");
                         answerText.setColor(Color.WHITE);
                         setQuestions();
@@ -385,6 +429,23 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                             definitionLabel.setText(engine.getPhrase());
                             hintLabel.setText(engine.getHint());
                             hintLabel.setVisible(false);
+                            String color = "";
+                            if(engine.getArticle().equals("das") || engine.getArticle().equals(" das") || engine.getArticle().equals(" das ") || engine.getArticle().equals("das ")){
+                                color = "[BLUE]";
+                            }else{
+                                if(engine.getArticle().equals("der") || engine.getArticle().equals(" der") || engine.getArticle().equals(" der ") || engine.getArticle().equals("der ")){
+                                    color = "[RED]";
+                                }else{
+                                    if(engine.getArticle().equals("die") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                        color = "[OLIVE]";
+                                    }else{
+                                        if(engine.getArticle().equals("der/ die Pl.") || engine.getArticle().equals(" der/ die Pl.") || engine.getArticle().equals("der/ die Pl. ")){
+                                            color = "[VIOLET]";
+                                        }
+                                    }
+                                }
+                            }
+                            articleLabel.setText(color + engine.getArticle());
                             answerText.setText("");
                             answerText.setColor(Color.WHITE);
                             setQuestions();
@@ -461,11 +522,23 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         stage.addActor(reportReasonWindow);
         stage.addActor(chancesWindow);
         stage.addActor(hintWindow);
+        stage.addActor(savedWindow);
     }
 
     public void create(){
-        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.BACK) {
+                    g.setScreen(new ConfigGameScreen(g, userInfo, grupo, skin));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
+                    dispose();
+                }
+                return super.keyDown(keyCode);
+            }
+        };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
     }
@@ -557,7 +630,19 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                         tmpEngine.setDefinitions(game_definitions);
                         engine = tmpEngine;
                         definitionLabel.setText(engine.getPhrase());
-                        articleLabel.setText(engine.getArticle());
+                        String color = "";
+                        if(engine.getArticle().equals("das") || engine.getArticle().equals(" das") || engine.getArticle().equals(" das ") || engine.getArticle().equals("das ")){
+                            color = "[BLUE]";
+                        }else{
+                            if(engine.getArticle().equals("der") || engine.getArticle().equals(" der") || engine.getArticle().equals(" der ") || engine.getArticle().equals("der ")){
+                                color = "[RED]";
+                            }else{
+                                if(engine.getArticle().equals("die") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                    color = "[OLIVE]";
+                                }
+                            }
+                        }
+                        articleLabel.setText(color + engine.getArticle());
                         tryLabel.setText(locale.chances() + " " + String.valueOf(numIntentos));
                     }
                 });
@@ -591,7 +676,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         stage.act(delta);
         stage.draw();
     }

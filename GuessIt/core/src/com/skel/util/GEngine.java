@@ -30,7 +30,7 @@ public class GEngine {
     }
 
     public String getPassPhrase(){
-        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replaceFirst("\\b"+engine_definitions.get(current_def).getPalabra()+"\\b", "[GREEN]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
+        return "[BLACK]"+engine_definitions.get(current_def).getFrase().replaceFirst("\\b"+engine_definitions.get(current_def).getPalabra()+"\\b", "[OLIVE]"+engine_definitions.get(current_def).getPalabra()+"[BLACK]");
     }
 
     public String getWrongPhrase(){

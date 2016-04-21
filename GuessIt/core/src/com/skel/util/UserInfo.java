@@ -72,18 +72,18 @@ public class UserInfo {
         return testType;
     }
 
-    public void addDefPlayed(){
-        prefs.putInteger("defplayed", prefs.getInteger("defplayed", 0) + 1);
+    public void addDefPlayed(String group_id){
+        prefs.putInteger(group_id, prefs.getInteger(group_id, 0) + 1);
         prefs.flush();
     }
 
-    public void addedNewDef(){
-        prefs.putInteger("defplayed", prefs.getInteger("defplayed") - 50);
+    public void addedNewDef(String group_id){
+        prefs.putInteger(group_id, prefs.getInteger(group_id) - 50);
         prefs.flush();
     }
 
-    public boolean canAddDefinition(){
-        if(prefs.getInteger("defplayed", 0) >= 50){
+    public boolean canAddDefinition(String group_id){
+        if(prefs.getInteger(group_id, 0) >= 50){
             //prefs.putInteger("defplayed", 0);
             //prefs.flush();
             return true;

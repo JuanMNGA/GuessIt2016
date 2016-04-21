@@ -2,6 +2,7 @@ package com.skel.game;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -44,7 +45,7 @@ public class MenuGameScreen implements Screen {
         backButton.getLabel().setWrap(true);
         newDefButton.getLabel().setWrap(true);
 
-        if(userInfo.canAddDefinition()){
+        if(userInfo.canAddDefinition(String.valueOf(grupo.getId()))){
             newDefButton.setVisible(true);
         }else{
             newDefButton.setVisible(false);
@@ -97,8 +98,19 @@ public class MenuGameScreen implements Screen {
     }
 
     public void create(){
-        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.BACK) {
+                    g.setScreen(new UserGroupsScreen(g, userInfo, skin));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
+                    dispose();
+                }
+                return super.keyDown(keyCode);
+            }
+        };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
     }
@@ -119,7 +131,7 @@ public class MenuGameScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         stage.act(delta);
         stage.draw();
     }

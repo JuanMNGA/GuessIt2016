@@ -1,16 +1,19 @@
 package com.skel.game;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.Net;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.net.HttpParametersUtils;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.InputListener;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FillViewport;
 import com.skel.util.Group;
 import com.skel.util.Strings_I18N;
@@ -63,7 +66,8 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
     private void getCategories(){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("id_aula",String.valueOf(grupo.getId()));
-        String url = utilidades.getUrl()+"getCategories.php?";
+        parameters.put("nivel", String.valueOf(actualLevel));
+        String url = utilidades.getUrl()+"getCategories2.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);
         httpsolicitud.setUrl(url);
         httpsolicitud.setContent(HttpParametersUtils.convertHttpParameters(parameters));
@@ -144,6 +148,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
 
         selectCategoryLabel.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                getCategories();
                 categoryWindow.setVisible(true);
             }
         });
@@ -164,12 +169,59 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
         scrollTable.add(selectCategoryLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.15f).colspan(7);
         scrollTable.row();
 
-        getCategories();
+        //getCategories();
+        TextButton playButton = new TextButton(locale.play(), skin.get("default", TextButton.TextButtonStyle.class));
+
+        playButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                if((levelOne.isChecked() || levelTwo.isChecked() || levelThree.isChecked() || levelFour.isChecked()) && !categories.isEmpty()){
+                    Gdx.app.log("configuracion","todo seleccionado");
+                    g.setScreen(new GameScreen(g,userInfo,grupo,actualLevel,categories, skin));
+                    dispose();
+                }
+            }
+        });
+
+        ImageTextButton backButton = new ImageTextButton(locale.back(), skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
+
+        backButton.addListener(new ClickListener() {
+            public void clicked(InputEvent event, float x, float y) {
+                g.setScreen(new MenuGameScreen(g,userInfo,grupo, skin));
+                dispose();
+            }
+        });
+        scrollTable.row();
+        scrollTable.add().height(Gdx.graphics.getHeight() * 0.05f).colspan(7);
+        scrollTable.row();
+        scrollTable.add(playButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f).colspan(7);
+        scrollTable.row();
+        scrollTable.add().height(Gdx.graphics.getHeight() * 0.05f).colspan(7);
+        scrollTable.row();
+        scrollTable.add(backButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f).colspan(7);
+        scrollTable.row();
+
+        ScrollPane scroller = new ScrollPane(scrollTable);
+
+        final Table table = new Table();
+        table.setFillParent(true);
+        table.add(scroller).fill().expand();
+        stage.addActor(table);
     }
 
     public void create(){
-        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.BACK) {
+                    g.setScreen(new MenuGameScreen(g, userInfo, grupo, skin));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
+                    dispose();
+                }
+                return super.keyDown(keyCode);
+            }
+        };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
     }
@@ -186,7 +238,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
                 int i=0;
                 while(stroke.hasMoreElements()){
                     final Integer idCat = new Integer(stroke.nextToken());
-                    final TextButton tmpCheck = new TextButton(stroke.nextElement().toString(),skin.get("group", TextButton.TextButtonStyle.class));
+                    final TextButton tmpCheck = new TextButton(stroke.nextElement().toString() + " (" + stroke.nextToken() + ") ",skin.get("group", TextButton.TextButtonStyle.class));
                     tmpCheck.addListener(new ClickListener() {
                          public void clicked(InputEvent event, float x, float y) {
                              if(categories.contains(idCat)){
@@ -209,11 +261,15 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
                 BuGr.setMinCheckCount(0);
                 BuGr.setUncheckLast(false);
                 BuGr.uncheckAll();
-
+                final Table tableCat = new Table();
                 TextButton okButton = new TextButton("Ok", skin.get("default", TextButton.TextButtonStyle.class));
 
                 okButton.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
+                        scrollWindow.clear();
+                        scrollWindow.pack();
+                        tableCat.clear();
+                        tableCat.pack();
                         categoryWindow.setVisible(false);
                     }
                 });
@@ -223,48 +279,11 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
 
                 ScrollPane scroll = new ScrollPane(scrollWindow);
 
-                final Table tableCat = new Table();
                 tableCat.add(scroll).top().center();
 
                 categoryWindow.add(tableCat);
                 categoryWindow.pack();
 
-                TextButton playButton = new TextButton(locale.play(), skin.get("default", TextButton.TextButtonStyle.class));
-
-                playButton.addListener(new ClickListener() {
-                    public void clicked(InputEvent event, float x, float y) {
-                        if((levelOne.isChecked() || levelTwo.isChecked() || levelThree.isChecked() || levelFour.isChecked()) && !categories.isEmpty()){
-                            Gdx.app.log("configuracion","todo seleccionado");
-                            g.setScreen(new GameScreen(g,userInfo,grupo,actualLevel,categories, skin));
-                            dispose();
-                        }
-                    }
-                });
-
-                ImageTextButton backButton = new ImageTextButton(locale.back(), skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
-
-                backButton.addListener(new ClickListener() {
-                    public void clicked(InputEvent event, float x, float y) {
-                        g.setScreen(new MenuGameScreen(g,userInfo,grupo, skin));
-                        dispose();
-                    }
-                });
-                scrollTable.row();
-                scrollTable.add().height(Gdx.graphics.getHeight() * 0.05f).colspan(7);
-                scrollTable.row();
-                scrollTable.add(playButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f).colspan(7);
-                scrollTable.row();
-                scrollTable.add().height(Gdx.graphics.getHeight() * 0.05f).colspan(7);
-                scrollTable.row();
-                scrollTable.add(backButton).width(Gdx.graphics.getWidth() * 0.8f).height(Gdx.graphics.getHeight() * 0.1f).colspan(7);
-                scrollTable.row();
-
-                ScrollPane scroller = new ScrollPane(scrollTable);
-
-                final Table table = new Table();
-                table.setFillParent(true);
-                table.add(scroller).fill().expand();
-                stage.addActor(table);
                 stage.addActor(categoryWindow);
             }
         });
@@ -288,7 +307,7 @@ public class ConfigGameScreen implements Screen, Net.HttpResponseListener {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         stage.act(delta);
         stage.draw();
     }

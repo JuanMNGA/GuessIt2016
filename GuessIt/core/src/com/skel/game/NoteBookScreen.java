@@ -37,7 +37,7 @@ public class NoteBookScreen implements Screen {
             scroller.add(noteLabel).width(Gdx.graphics.getWidth()*0.8f).height(Gdx.graphics.getHeight()*0.1f);
             scroller.row();
             final TextArea tmpTA = new TextArea(defSaved.getString(keys[i]), skin.get("default", TextField.TextFieldStyle.class));
-            tmpTA.setMaxLength(250);
+            tmpTA.setMaxLength(80);
             tmpTA.setPrefRows(4);
             tmpTA.addListener(new InputListener(){
                 public boolean keyTyped (InputEvent event, char character) {
@@ -74,8 +74,19 @@ public class NoteBookScreen implements Screen {
     }
 
     public void create(){
-        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight()));
+        stage = new Stage(new FillViewport(Gdx.graphics.getWidth(),Gdx.graphics.getHeight())){
+            @Override
+            public boolean keyDown(int keyCode) {
+                if (keyCode == Input.Keys.BACK) {
+                    g.setScreen(new MainScreen(g));
+                    Gdx.input.setOnscreenKeyboardVisible(false);
+                    dispose();
+                }
+                return super.keyDown(keyCode);
+            }
+        };
         Gdx.input.setInputProcessor(stage);
+        Gdx.input.setCatchBackKey(true);
 
         createStageActors();
     }
@@ -96,7 +107,7 @@ public class NoteBookScreen implements Screen {
     @Override
     public void render(float delta) {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        Gdx.gl.glClearColor(1, 1, 0.8f, 1);
+        Gdx.gl.glClearColor(0.95f, 0.95f, 0.95f, 1);
         stage.act(delta);
         stage.draw();
     }
