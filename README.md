@@ -12,3 +12,9 @@ Participantes en el proyecto:
 * Anke Berns: Participante en el proyecto (Departamento de Filología Francesa e Inglesa)
 * Lorena Gutiérrez Madroñal: Participante en el proyecto (Departamento de Ingeniería Informática)
 * Juan Miguel Ruiz Ladrón: Desarrollador
+
+Estudiantes de la Universidad de Cádiz que colaboraron:
+
+* Alicia Garrido Guerrero (Departamento de Filología Francesa e Inglesa)
+* Mercedes Paéz Piña (Departamento de Filología Francesa e Inglesa)
+* Salvador Reyes Sánchez (Departamento de Filología Francesa e Inglesa)
