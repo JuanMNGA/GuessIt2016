@@ -63,12 +63,9 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                 return super.keyDown(keyCode);
             }
         };
+        prefs = Gdx.app.getPreferences("UserState");
         Gdx.input.setInputProcessor(stage);
         Gdx.input.setCatchBackKey(true);
-
-        prefs = Gdx.app.getPreferences("UserState");
-        //prefs.putInteger("14",50);
-        //prefs.flush();
         createStageActors();
     }
 
@@ -139,11 +136,13 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
         //Funciones callback
         LoginButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
+                        prefs.putInteger("14",50);
+                        prefs.flush();
                         // Conexion http
                         HashMap<String, String> parameters = new HashMap<String, String>();
                         parameters.put("usuario",new String(userLogin.getText().getBytes(), Charset.forName("UTF-8")));
                         parameters.put("password",new String(userPass.getText().getBytes(), Charset.forName("UTF-8")));
-                        String url = utilidades.getUrl()+"login2.php?";
+                        String url = utilidades.getUrl()+"login.php?";
                         //solicitud_variables = "&nombre=suscribete&puntaje=222";
                         httpsolicitud = new Net.HttpRequest(httpMethod);
                         httpsolicitud.setUrl(url);
@@ -267,6 +266,8 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
             public void run() {
                 if(Response.isEmpty()){
                     Gdx.app.log("conexion","fallida");
+                    prefs.putInteger("14",50);
+                    prefs.flush();
                     g.setScreen(new MainScreen(g));
                     Gdx.input.setOnscreenKeyboardVisible(false);
                     dispose();
@@ -283,6 +284,7 @@ public class LoginScreen implements Screen, Net.HttpResponseListener {
                             Gdx.input.setOnscreenKeyboardVisible(false);
                             dispose();
                         }else{
+                            Gdx.input.setOnscreenKeyboardVisible(false);
                             String responseFailure = stroker.nextToken();
                             errorLabel.setText(responseFailure);
                             errorWindow.setVisible(true);

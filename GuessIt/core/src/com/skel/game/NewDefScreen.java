@@ -75,8 +75,8 @@ public class NewDefScreen implements Screen, Net.HttpResponseListener {
     public void sendDefinition(){
         HashMap<String, String> parameters = new HashMap<String, String>();
         parameters.put("nivel", String.valueOf(actualLevel)); // CAMBIAR
-        parameters.put("palabra", new String(word.getText().toString().getBytes(), Charset.forName("UTF-8")));
-        parameters.put("articulo", new String(article.getText().toString().getBytes(), Charset.forName("UTF-8")));
+        parameters.put("palabra", new String(wordString.getBytes(), Charset.forName("UTF-8")));
+        parameters.put("articulo", new String(articleString.getBytes(), Charset.forName("UTF-8")));
         parameters.put("frase", new String(sentence.getText().getBytes(), Charset.forName("UTF-8")));
         parameters.put("pista", new String(hint.getText().getBytes(), Charset.forName("UTF-8")));
         parameters.put("id_categoria", String.valueOf(actualCategory)); // CAMBIAR

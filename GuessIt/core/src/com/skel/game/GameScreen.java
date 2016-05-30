@@ -214,6 +214,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                         // Change to final rate screen
                         Gdx.app.log("cambio", "a pantalla de puntuacion final");
                     }
+                    answerText.setText("");
                 }
             }
         });
@@ -391,11 +392,11 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                             if(engine.getArticle().equals("der") || engine.getArticle().equals(" der") || engine.getArticle().equals(" der ") || engine.getArticle().equals("der ")){
                                 color = "[RED]";
                             }else{
-                                if(engine.getArticle().equals("die") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                if(engine.getArticle().equals("die") || engine.getArticle().equals(" die") || engine.getArticle().equals("die ")){
                                     color = "[OLIVE]";
                                 }else{
-                                    if(engine.getArticle().equals("der/ die Pl.") || engine.getArticle().equals(" der/ die Pl.") || engine.getArticle().equals("der/ die Pl. ")){
-                                        color = "[VIOLET]";
+                                    if(engine.getArticle().equals("der/ die Pl.") || engine.getArticle().equals(" der/ die Pl.") || engine.getArticle().equals("der/ die Pl. ") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                        color = "[BLACK]";
                                     }
                                 }
                             }
@@ -436,11 +437,11 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                                 if(engine.getArticle().equals("der") || engine.getArticle().equals(" der") || engine.getArticle().equals(" der ") || engine.getArticle().equals("der ")){
                                     color = "[RED]";
                                 }else{
-                                    if(engine.getArticle().equals("die") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                    if(engine.getArticle().equals("die") || engine.getArticle().equals(" die") || engine.getArticle().equals("die ")){
                                         color = "[OLIVE]";
                                     }else{
-                                        if(engine.getArticle().equals("der/ die Pl.") || engine.getArticle().equals(" der/ die Pl.") || engine.getArticle().equals("der/ die Pl. ")){
-                                            color = "[VIOLET]";
+                                        if(engine.getArticle().equals("der/ die Pl.") || engine.getArticle().equals(" der/ die Pl.") || engine.getArticle().equals("der/ die Pl. ") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                            color = "[BLACK]";
                                         }
                                     }
                                 }
@@ -637,8 +638,12 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
                             if(engine.getArticle().equals("der") || engine.getArticle().equals(" der") || engine.getArticle().equals(" der ") || engine.getArticle().equals("der ")){
                                 color = "[RED]";
                             }else{
-                                if(engine.getArticle().equals("die") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                if(engine.getArticle().equals("die") || engine.getArticle().equals(" die") || engine.getArticle().equals("die ")){
                                     color = "[OLIVE]";
+                                }else{
+                                    if(engine.getArticle().equals("der/ die Pl.") || engine.getArticle().equals(" der/ die Pl.") || engine.getArticle().equals("der/ die Pl. ") || engine.getArticle().equals("die Pl.") || engine.getArticle().equals("die PL.") || engine.getArticle().equals("die pl.") || engine.getArticle().equals("die pL.")){
+                                        color = "[BLACK]";
+                                    }
                                 }
                             }
                         }
