@@ -14,7 +14,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"> Alumnos </div>
 				<div class="panel-body">
-					<select multiple id="alumnos_seleccionados[]">
+					<select multiple name="alumnos_seleccionados[]">
 						<?php 
 							include('scripts/get_students_report.php');
 						?>
@@ -29,7 +29,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"> Informe </div>
 				<div class="panel-body">
-					<select id="informe_seleccionado">
+					<select name="informe_seleccionado">
 						<option value="1"> Número de definiciones jugadas </option>
 						<option value="2"> Número / Porcentaje de definiciones acertadas </option>
 						<option value="3"> Porcentaje de reportes que coinciden con el docente </option>
@@ -64,11 +64,11 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"> Rango del informe </div>
 				<div class="panel-body">
-					<div class="form-group">
+					<!-- <div class="form-group">
 						<input type="radio" name="rango" value="dias"> Días
 						<input type="radio" name="rango" value="semanas"> Semanas
 						<input type="radio" name="rango" value="todo"> Total
-					</div>
+					</div> -->
 					<div class="form-group">
 						<input type="text" class="form-control input-mg" name="rango_ini" placeHolder="Inicio del rango YYYY-MM-DD">
 						<input type="text" class="form-control input-mg" name="rango_fin" placeHolder="Fin del rango YYYY-MM-DD">
@@ -83,7 +83,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"> Niveles </div>
 				<div class="panel-body">
-					<select id="nivel_seleccionado">
+					<select name="nivel_seleccionado">
 						<option value="1"> Nivel 1 </option>
 						<option value="2"> Nivel 2 </option>
 						<option value="3"> Nivel 3 </option>

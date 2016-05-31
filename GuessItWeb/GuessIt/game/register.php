@@ -1,6 +1,6 @@
 <?php
 	
-	$link = mysql_connect('localhost', 'root', '')
+	$link = mysql_connect('localhost', 'root', 'juanmo91')
 	or die('No se pudo conectar: ' . mysql_error());
 	//echo 'Conecxion exitosa';
 	mysql_select_db('guessit') or die('No se pudo seleccionar la base de datos');
@@ -10,6 +10,11 @@
 	$email = $_POST['email'];
 	$usuario = $_POST['usuario'];
 	$pass = $_POST['password'];
+	
+	//$message = "Welcome ".$name." ".$lastname." to GuessIt!. You're password is: ".$pass." . Don't delete this message. Thanks!";
+	
+	//mail($email,"GuessIt! Registration",$message);
+
 	$pass = password_hash($pass,PASSWORD_DEFAULT);
 	
 	$get_last_test = "SELECT test FROM usuarios ORDER BY id DESC LIMIT 1";
@@ -23,7 +28,7 @@
 	
 	$alta = $_POST['alta'];
 	
-	$sql="INSERT INTO usuarios(nombre,apellidos,email,usuario, password, alta, test) VALUES('$name','$lastname','$email','$usuario','$pass','$alta','$test')";
+	$sql="INSERT INTO usuarios(nombre,apellidos,email,usuario, password, alta, validar, test) VALUES('$name','$lastname','$email','$usuario','$pass','$alta','1','$test')";
 
 	mysql_query($sql);
 

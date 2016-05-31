@@ -44,7 +44,7 @@ class Login_Register_Model extends CI_Model
 		));
 	}
 	
-	function update_user($id, $data){
+	function update_user_old($id, $data){
 		$this->db->where('id', $id);
 		$this->db->update('usuario4', $data);
 		$report = array();
@@ -68,6 +68,12 @@ class Login_Register_Model extends CI_Model
 	    	return $insert;
 	}
 	
+	function update_user($id, $data){
+		$this->db->where('id',$id);
+		$this->db->update('usuarios',$data);
+		return true;
+	}
+	
 	function get_user(){
 		$userdata['id'] = $this->details->id;
 		$userdata['name'] = $this->details->nombre_usuario;
@@ -80,5 +86,12 @@ class Login_Register_Model extends CI_Model
 		$this->db->where('email',$email);
 		$res = $this->db->get();
 		return $res->row();
+	}
+	
+	function get_teacher($email){
+		$this->db->from('usuarios');
+		$this->db->where('email',$email);
+		$res = $this->db->get();
+		return $res;
 	}
 }

@@ -1,6 +1,7 @@
 <?php
 
-	$mysqli = mysqli_connect("localhost","root","","guessit");
+	$mysqli = mysqli_connect("localhost","root","juanmo91","guessit");
+	mysqli_query($mysqli,"SET NAMES 'utf8'");
 	$res = mysqli_query($mysqli, "SELECT * FROM usuarios WHERE tipo=1 AND validar=0");
 	echo form_open('index.php/Main/validate_teachers','class="form"');
 	foreach($res as $row){

@@ -26,4 +26,16 @@ class Groups_Model extends CI_Model
 		$res = $this->db->get();
 		return $res->row();
 	}
+
+	function update_group($id, $data){
+		$this->db->where('id',$id);
+		$this->db->update('aula',$data);
+		return true;
+	}
+
+	function update_category($id, $data){
+		$this->db->where('id',$id);
+		$this->db->update('categoria',$data);
+		return true;
+	}
 }

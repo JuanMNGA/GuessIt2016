@@ -1,6 +1,6 @@
 <?php
 		
-		$link = mysql_connect('localhost', 'root', '')
+		$link = mysql_connect('localhost', 'root', 'juanmo91')
 			or die('No se pudo conectar: ' . mysql_error());
 		
 		mysql_select_db('guessit') or die('No se pudo seleccionar la base de datos');
@@ -26,20 +26,43 @@
 		$res = mysql_query($sql);
 		$media = mysql_fetch_assoc($res);
 		
-		$string_result .= $media['media'].";";
+		if(empty($media['media'])){
+			$string_result .= "0;";
+		}else{
+			$string_result .= $media['media'].";";
+		}
 		
-		$sql = "SELECT categoria.nombre as categoria, count(puntuaciones.id) FROM categoria, definiciones, puntuaciones WHERE definiciones.id = puntuaciones.id_palabra AND definiciones.id_categoria = categoria.id AND puntuaciones.id_usuario = ".$id_usuario." AND definiciones.id_aula = ".$id_aula." GROUP BY definiciones.id_categoria LIMIT 1";
+		$sql = "SELECT categoria.nombre as categoria, count(puntuaciones.id) as cantidad FROM categoria, definiciones, puntuaciones WHERE definiciones.id = puntuaciones.id_palabra AND definiciones.id_categoria = categoria.id AND puntuaciones.id_usuario = ".$id_usuario." AND definiciones.id_aula = ".$id_aula." GROUP BY definiciones.id_categoria ORDER BY cantidad DESC LIMIT 1";
 		$res = mysql_query($sql);
 		$categoria = mysql_fetch_assoc($res);
 		
-		$string_result .= $categoria['categoria'].";";
-		
-		$sql = "SELECT definiciones.palabra as palabra, puntuaciones.motivo AS motivo FROM definiciones,puntuaciones WHERE puntuaciones.reporte = 1 AND puntuaciones.id_palabra = definiciones.id AND definiciones.id_usuario = ".$id_usuario." AND definiciones.id_aula = ".$id_aula;
+		if(empty($categoria['categoria'])){
+			$string_result .= "None;";
+		}else{
+			$string_result .= $categoria['categoria'].";";
+		}
+
+		$string_result .= ";#;";
+
+		//$sql = "SELECT result.catno AS categoria_nombre, count(puntuaciones.id) AS jugadas, cantidad.canti AS categoria_maximo FROM ( SELECT categoria.id AS catid, categoria.nombre AS catno FROM categoria WHERE categoria.id_aula = ".$id_aula.") result, ( SELECT definiciones.id_categoria AS catid, count(*) AS canti FROM definiciones, aula, categoria WHERE aula.id = ".$id_aula." AND aula.id = definiciones.id_aula AND categoria.id = definiciones.id_categoria GROUP BY definiciones.id_categoria ORDER BY definiciones.id_categoria) cantidad, definiciones, puntuaciones WHERE result.catid = definiciones.id_categoria AND puntuaciones.id_palabra = definiciones.id AND puntuaciones.id_usuario = ".$id_usuario." AND cantidad.catid = result.catid GROUP BY result.catid";
+		$sql = "SELECT count(definiciones.id) AS jugadas, categoria.nombre AS categoria_nombre FROM definiciones, puntuaciones, categoria WHERE definiciones.id = puntuaciones.id_palabra AND definiciones.id_categoria = categoria.id AND puntuaciones.acierto = 1 AND definiciones.id_aula = ".$id_aula." AND puntuaciones.id_usuario = ".$id_usuario." GROUP BY definiciones.id_categoria";
+		$res = mysql_query($sql);
+
+		if(count($res) > 0){
+			while($row = mysql_fetch_assoc($res)){
+				$string_result .= $row['categoria_nombre'].";".$row['jugadas'].";";//.$row['categoria_maximo'].";";
+			}
+		}
+
+		$string_result .= ";#;";
+
+
+		$sql = "SELECT definiciones.palabra as palabra, puntuaciones.motivo AS motivo, count(motivo) as cantidad FROM definiciones,puntuaciones WHERE puntuaciones.reporte = 1 AND puntuaciones.id_palabra = definiciones.id AND definiciones.id_usuario = ".$id_usuario." AND definiciones.id_aula = ".$id_aula." GROUP BY motivo";
 		$res = mysql_query($sql);
 		
 		if(count($res) > 0){
 			while($row = mysql_fetch_assoc($res)){
-				$string_result .= $row['palabra'].";".$row['motivo'].";";
+				$string_result .= $row['palabra'].";".$row['motivo'].";".$row['cantidad'].";";
 			}
 		}
 		

@@ -1,7 +1,7 @@
 <div class="col-md-10">
 <div class="container-fluid">
 	<ul class="nav nav-tabs nav-justified">
-		<li role="presentation"> <a href="<?php echo base_url('index.php/Main/show_report_admin')?>"> Informe por alumnos </a> </li>
+		<li role="presentation"> <a href="<?php echo base_url('index.php/Main/show_report_teacher')?>"> Informe por alumnos </a> </li>
 		<li role="presentation" class="active"> <a href=""> Informe por definiciones </a> </li>
 	</ul>
 	

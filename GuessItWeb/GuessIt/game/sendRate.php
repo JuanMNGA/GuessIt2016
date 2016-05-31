@@ -1,6 +1,6 @@
 <?php
 		
-		$link = mysql_connect('localhost', 'root', '')
+		$link = mysql_connect('localhost', 'root', 'juanmo91')
 			or die('No se pudo conectar: ' . mysql_error());
 		
 		mysql_select_db('guessit') or die('No se pudo seleccionar la base de datos');

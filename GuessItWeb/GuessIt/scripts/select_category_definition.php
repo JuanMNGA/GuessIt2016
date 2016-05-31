@@ -1,6 +1,6 @@
 <?php
 
-	$mysqli = mysqli_connect("localhost","root","","guessit");
+	$mysqli = mysqli_connect("localhost","root","juanmo91","guessit");
 	mysqli_query($mysqli,"SET NAMES 'utf8'");
 	$res = mysqli_query($mysqli, "SELECT * FROM categoria WHERE id_aula='".$id_grupo."'");
 	echo '<div class="form-group">';

@@ -1,6 +1,6 @@
 <?php
 	
-	$link = mysql_connect('localhost', 'root', '')
+	$link = mysql_connect('localhost', 'root', 'juanmo91')
 	or die('No se pudo conectar: ' . mysql_error());
 	//echo 'Conecxion exitosa';
 	mysql_select_db('guessit') or die('No se pudo seleccionar la base de datos');
@@ -13,7 +13,10 @@
 	$id_categoria = $_POST['id_categoria'];
 	$id_aula = $_POST['id_aula'];
 	$id_usuario = $_POST['id_usuario'];
-	$fecha = $_POST['fecha'];	
+	$fecha = $_POST['fecha'];
+
+	$palabra = str_replace("[RED]","",$palabra);
+	$articulo = str_replace("[BLACK]","",$articulo);
 	
 	$sql="INSERT INTO definiciones(nivel,palabra,articulo,frase,pista,id_categoria,id_aula,id_usuario,fecha,validar) VALUES('$nivel','$palabra','$articulo','$frase','$pista','$id_categoria','$id_aula','$id_usuario','$fecha',1)";
 

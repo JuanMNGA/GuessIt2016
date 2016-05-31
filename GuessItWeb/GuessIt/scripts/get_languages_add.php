@@ -1,5 +1,5 @@
 <?php
-$mysqli = mysqli_connect("localhost","root","","guessit");
+$mysqli = mysqli_connect("localhost","root","juanmo91","guessit");
 		$res = mysqli_query($mysqli, "SELECT * FROM idiomas");
 		if(count($res) > 0){
 			echo '<table class="table">';

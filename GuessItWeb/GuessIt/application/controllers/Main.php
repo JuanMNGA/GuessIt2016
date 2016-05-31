@@ -87,14 +87,95 @@ class Main extends CI_Controller
 		}
 		$this->show_teacher_validate_admin();
 	}
+
+	function show_modify_teachers_list(){
+		$this->load->view('main/admin/header');
+		$this->load->view('main/admin/side_menu');
+		$this->load->view('slave_menus/admin/slave_menu_teacher');
+		$this->load->view('content/admin/modify_teachers_list');
+		$this->load->view('main/admin/footer');
+	}
+
+	function show_modify_teachers_form(){
+		$teacher_id = $this->input->post('uid');
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_usuario' => $teacher_id
+		);
+		$this->load->view('main/admin/header');
+		$this->load->view('main/admin/side_menu');
+		$this->load->view('slave_menus/admin/slave_menu_teacher');
+		$this->load->view('content/admin/modify_teachers_form', $data);
+		$this->load->view('main/admin/footer');
+	}
+
+	function update_teacher(){
+		$teacher_id = $this->input->post('uid');
+		$teacher_name = $this->input->post('name');
+		$teacher_lastname = $this->input->post('apellidos');
+		$teacher_email = $this->input->post('email');
+		$teacher_center = $this->input->post('centro');
+		$teacher_password = password_hash($this->input->post('password'),PASSWORD_DEFAULT);
+
+		$data = array(
+			'id' => $teacher_id,
+			'nombre' => $teacher_name,
+			'apellidos' => $teacher_lastname,
+			'email' => $teacher_email,
+			'password' => $teacher_password,
+			'centro' => $teacher_center
+		);
+		$this->load->model('Login_Register_Model');
+		$this->Login_Register_Model->update_user($data['id'],$data);
+		
+		$this->show_modify_teachers_list();
+	}
 	
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% REPORTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	function show_report_admin(){
 		$this->load->view('main/admin/header');
 		$this->load->view('main/admin/side_menu');
-		$this->load->view('reports/admin/report_students');
+		$this->load->view('reports/admin/report_select_group_students');
 		$this->load->view('main/admin/footer');
+	}
+
+	function show_report_admin_form(){
+		$this->load->view('main/admin/header');
+		$this->load->view('main/admin/side_menu');
+		$this->load->view('reports/admin/report_select_group_students');
+		$id_grupo = $this->input->post('grupo_seleccionado');
+		$data = array(
+			'id_grupo' => $id_grupo
+		);
+		$this->load->view('reports/admin/report_students', $data);
+		$this->load->view('main/admin/footer');
+	}
+
+	function show_report_admin_students_result(){ // CAMBIAR
+		$data = array(
+			'id_grupo' => $this->input->post('gid'),
+			'id_docente' => $this->input->post('uid'),
+			'alumnos' => $this->input->post('alumnos_seleccionados'),
+			'informe' => $this->input->post('informe_seleccionado'),
+			'tipo' => $this->input->post('tipo'),
+			'rango' => $this->input->post('rango'),
+			'rango_ini' => $this->input->post('rango_ini'),
+			'rango_fin' => $this->input->post('rango_fin'),
+			'nivel' => $this->input->post('nivel_seleccionado')
+		);
+		if($data['tipo'] != 'csv'){
+			$this->load->view('main/admin/header');
+			$this->load->view('main/admin/side_menu');
+			$this->load->view('reports/admin/report_select_group_students',$data);
+			// Aqui el php de la grafica
+			$this->load->view('reports/admin/report_students_result',$data);
+		
+			$this->load->view('main/admin/footer');
+		}else{
+			$this->load->view('reports/admin/report_students_result',$data);
+		}
 	}
 	
 	function show_report_definitions_admin(){
@@ -104,7 +185,7 @@ class Main extends CI_Controller
 		$this->load->view('main/admin/footer');
 	}
 	
-	// %%%%%%%%%%%%%  Languages %%%%%%%%%%%%%
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%  Languages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	function show_languages_admin(){
 		$this->load->view('main/admin/header');
@@ -139,12 +220,22 @@ class Main extends CI_Controller
 		$this->show_languages_add_admin();
 	}
 	
-	// %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	// %%%%%%%%%%%%%%%%%%%%%%% PROFILE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	function show_profile_admin(){
+		$this->load->model('Login_Register_Model');
+		$res = $this->Login_Register_Model->get_teacher($this->session->userdata('email'));
+		$result = $res->row();
+		$data = array(
+			'id' => $result->id,
+			'nombre' => $result->nombre,
+			'apellidos' => $result->apellidos,
+			'email' => $result->email,
+			'centro' => $result->centro
+		);
 		$this->load->view('main/admin/header');
 		$this->load->view('main/admin/side_menu');
-		$this->load->view('slave_menus/admin/slave_menu_teacher');
+		$this->load->view('content/admin/profile', $data);
 		$this->load->view('main/admin/footer');
 	}
 	
@@ -156,6 +247,8 @@ class Main extends CI_Controller
 		$this->load->view('slave_menus/slave_menu_empty');
 		$this->load->view('main/teacher/footer');
 	}
+
+	// %%%%%%%%%%%%%%%%%%%%%%%%%%% DEFINITIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	function show_slave_definitions_teacher(){
 		$this->load->view('main/teacher/header');
@@ -163,6 +256,8 @@ class Main extends CI_Controller
 		$this->load->view('slave_menus/teacher/slave_menu_definition');
 		$this->load->view('main/teacher/footer');
 	}
+
+	// %%%%%%%%%%%%%%%%%%%%%%%% ADD DEFINITIONS %%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	function show_add_definitions_teacher(){
 		$this->load->model('Login_Register_Model');
@@ -214,6 +309,255 @@ class Main extends CI_Controller
 		$this->Teacher_Model->store_def($data_to_store);
 		$this->add_definitions();
 	}
+
+	// %%%%%%%%%%%%%%%%%%%% IMPORT DEFINITIONS %%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	function show_import_definitions_teacher(){
+		$this->load->model('Login_Register_Model');
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/select_group_import',$data);
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function show_import_definitions(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_import',$data);
+		$id_grupo = $this->input->post('grupo_seleccionado');
+		$data = array(
+			'id_grupo' => $id_grupo,
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/import_definitions',$data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	// %%%%%%%%%%%%%%% MODIFY DEFINITIONS %%%%%%%%%%%%%%%%%%
+
+	function show_modify_definitions_teacher(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition_modify', $data);
+		$this->load->view('main/teacher/footer');
+
+	}
+
+	function show_modify_definitions(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition_modify', $data);
+		$id_grupo = $this->input->post('grupo_seleccionado');
+		$data = array(
+			'id_grupo' => $id_grupo,
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/modify_definitions', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function show_modify_definitions_list(){
+		$nivel = $this->input->post('nivel_seleccionado');
+		$categoria = $this->input->post('categoria_seleccionada');
+
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition_modify', $data);
+		$id_grupo = $this->input->post('gid');
+		$data = array(
+			'id_grupo' => $id_grupo,
+			'id_docente' => $id_profesor->id,
+			'nivel' => $nivel,
+			'categoria' => $categoria
+		);
+		$this->load->view('content/teacher/modify_definitions_list', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function show_modify_definitions_form(){
+		$definition_id = $this->input->post('did');
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id,
+			'definicion' => $definition_id,
+			'id_grupo' => $this->input->post('gid'),
+			'nivel' => $this->input->post('lvl'),
+			'categoria' => $this->input->post('cat')
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition_modify', $data);
+		$this->load->view('content/teacher/modify_definition_form', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function update_definition(){
+		$definition_id = $this->input->post('did');
+		$definition_word = $this->input->post('word');
+		$definition_article = $this->input->post('article');
+		$definition_sentence = $this->input->post('sentence');
+		$definition_hint = $this->input->post('hint');
+		$id_grupo = $this->input->post('gid');
+		$nivel = $this->input->post('lvl');
+		$categoria = $this->input->post('cat');
+
+		$data = array(
+			'id' => $definition_id,
+			'palabra' => $definition_word,
+			'articulo' => $definition_article,
+			'frase' => $definition_sentence,
+			'pista' => $definition_hint
+		);
+		$this->load->model('Teacher_Model');
+		$this->Teacher_Model->update_def($data);
+		
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id,
+			'id_grupo' => $id_grupo,
+			'nivel' => $nivel,
+			'categoria' => $categoria
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition_modify', $data);
+		$this->load->view('content/teacher/modify_definitions_list', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+		// %%%%%%%%%%%%%%%%%%% REVIEW REPORTS %%%%%%%%%%%%%%%%%%%%%%%
+
+	function show_definition_review_teacher(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition_review', $data);
+		$this->load->view('main/teacher/footer');	
+	}
+
+	function show_definition_review_list(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_definition_review', $data);
+		$id_grupo = $this->input->post('grupo_seleccionado');
+		$data = array(
+			'id_grupo' => $id_grupo,
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/review_definitions', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function review_report(){
+		$query = $this->input->post('pid');
+		$review = $this->input->post('correccion');
+		$this->load->model('Teacher_Model');
+		var_dump($query);
+		var_dump($review);
+		for($i = 0 ; $i < count($query) ; $i++ ){
+			$this->Teacher_Model->update_review($query[$i], $review[$i]);
+		}
+		$this->show_definition_review_teacher();
+	}
+
+		// %%%%%%%%%%%%%%%%%%% STUDENTS DEFINITIONS %%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	function show_students_apport_teacher(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_students_apport', $data);
+		$this->load->view('main/teacher/footer');
+
+	}
+
+	function show_students_apport_list(){
+		$id_grupo = $this->input->post('grupo_seleccionado');
+
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_students_apport', $data);
+		$data = array(
+			'id_grupo' => $id_grupo
+		);
+		$this->load->view('content/teacher/students_apport_list', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function show_students_apport_definitions_list(){
+		$student_id = $this->input->post('uid');
+		$group_id = $this->input->post('gid');
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id,
+			'id_grupo' => $group_id,
+			'id_usuario' => $student_id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_definition');
+		$this->load->view('content/teacher/select_group_students_apport', $data);
+		$this->load->view('content/teacher/students_apport_definitions_list', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	// %%%%%%%%%%%%%%% REPORTS %%%%%%%%%%%%%%%%%%%
 	
 	function show_report_teacher(){
 		$this->load->model('Login_Register_Model');
@@ -258,15 +602,17 @@ class Main extends CI_Controller
 			'rango_fin' => $this->input->post('rango_fin'),
 			'nivel' => $this->input->post('nivel_seleccionado')
 		);
+		if($data['tipo'] != 'csv'){
+			$this->load->view('main/teacher/header');
+			$this->load->view('main/teacher/side_menu');
+			$this->load->view('reports/teacher/report_select_group_students',$data);
+			// Aqui el php de la grafica
+			$this->load->view('reports/teacher/report_students_result',$data);
 		
-		$this->load->view('main/teacher/header');
-		$this->load->view('main/teacher/side_menu');
-		$this->load->view('reports/teacher/report_select_group_students',$data);
-		
-		// Aqui el php de la grafica
-		$this->load->view('reports/teacher/report_students_result',$data);
-		
-		$this->load->view('main/teacher/footer');		
+			$this->load->view('main/teacher/footer');
+		}else{
+			$this->load->view('reports/teacher/report_students_result',$data);
+		}		
 	}
 	
 	function show_report_definitions_teacher(){
@@ -281,6 +627,8 @@ class Main extends CI_Controller
 		$this->load->view('reports/teacher/report_definitions');
 		$this->load->view('main/teacher/footer');
 	}
+
+	// %%%%%%%%%%%%%%%%%%%%%%% STUDENTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	function show_slave_students_teacher(){
 		$this->load->view('main/teacher/header');
@@ -330,9 +678,10 @@ class Main extends CI_Controller
 	
 	function validate_student_form(){
 		$query = $this->input->post('estudiantes_validados');
+		$id_grupo = $this->input->post('gid');
 		$this->load->model('Teacher_Model');
 		foreach($query as $id_alumno){
-			$this->Teacher_Model->student_validate($id_alumno);
+			$this->Teacher_Model->student_validate($id_alumno, $id_grupo);
 		}
 		$this->show_validate_student_teacher();
 	}
@@ -356,8 +705,97 @@ class Main extends CI_Controller
 		} else {
 			$data['flash_message'] = FALSE;
 		}
-		$this->show_add_teacher_admin();
+		$this->show_add_student_teacher();
 	}
+
+	// %%%%%%%%%%%%%%%%%%% MODIFY STUDENTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+	function show_modify_students_teacher(){
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/select_group_student_modify', $data);
+		$this->load->view('main/teacher/footer');
+
+	}
+
+	function show_modify_students_list(){
+		$id_grupo = $this->input->post('grupo_seleccionado');
+
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/select_group_student_modify', $data);
+		$data = array(
+			'id_grupo' => $id_grupo
+		);
+		$this->load->view('content/teacher/modify_students_list', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function show_modify_students_form(){
+		$student_id = $this->input->post('uid');
+		$group_id = $this->input->post('gid');
+		$this->load->model('Login_Register_Model');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id,
+			'id_grupo' => $group_id,
+			'id_usuario' => $student_id
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/select_group_student_modify', $data);
+		$this->load->view('content/teacher/modify_student_form', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function update_student(){
+		$student_id = $this->input->post('uid');
+		$student_name = $this->input->post('name');
+		$student_lastname = $this->input->post('apellidos');
+		$student_email = $this->input->post('email');
+		$student_username = $this->input->post('username');
+		$student_password = password_hash($this->input->post('password'),PASSWORD_DEFAULT);
+		$id_grupo = $this->input->post('gid');
+
+		$data = array(
+			'id' => $student_id,
+			'nombre' => $student_name,
+			'apellidos' => $student_lastname,
+			'email' => $student_email,
+			'usuario' => $student_username,
+			'password' => $student_password
+		);
+		$this->load->model('Login_Register_Model');
+		$this->Login_Register_Model->update_user($data['id'],$data);
+		
+		
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id,
+			'id_grupo' => $id_grupo
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/select_group_student_modify', $data);
+		$this->load->view('content/teacher/modify_students_list', $data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	// %%%%%%%%%%%%%%%%%%%%%% GROUPS %%%%%%%%%%%%%%%%%%%%%%%%%%%
 	
 	function show_slave_classroom_teacher(){
 		$this->load->view('main/teacher/header');
@@ -409,10 +847,130 @@ class Main extends CI_Controller
 		$this->show_add_classroom_teacher();
 	}
 	
-	function show_profile_teacher(){
+	function show_add_classroom_add_cat_teacher(){
+		$this->load->model('Login_Register_Model');
 		$this->load->view('main/teacher/header');
 		$this->load->view('main/teacher/side_menu');
-		$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('slave_menus/teacher/slave_menu_classroom');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/select_group_category',$data);
+		$this->load->view('main/teacher/footer');
+	}
+	
+	function show_add_category_teacher(){
+		$this->load->model('Login_Register_Model');
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_classroom');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+
+        	$this->load->view('content/teacher/select_group_category',$data);
+        	$id_grupo = $this->input->post('grupo_seleccionado');
+		$data_grupo = array(
+                      'id_grupo' => $id_grupo
+                      );
+		$this->load->view('content/teacher/add_category',$data_grupo);
+		$this->load->view('main/teacher/footer');
+	}
+    
+    function add_category(){
+        $this->load->model('Groups_Model');
+        $split_categoria = $this->input->post('categories');
+        $id_aula = $this->input->post('aula');
+        
+        $tok = strtok($split_categoria,",");
+		while($tok !== false){
+			$categorias[] = $tok;
+			//echo $tok;
+			$data_cat = array(
+                              'nombre' => $tok,
+                              'id_aula' => $id_aula
+                              );
+			$this->Groups_Model->add_categorie($data_cat);
+			$tok = strtok(",");
+		}
+        $this->show_add_classroom_add_cat_teacher();
+    }
+	
+	function show_group_modify_teacher(){
+		$this->load->model('Login_Register_Model');
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_classroom');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+		$this->load->view('content/teacher/select_group_modify_group',$data);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function show_group_modify_teacher_form(){
+		$this->load->model('Login_Register_Model');
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		$this->load->view('slave_menus/teacher/slave_menu_classroom');
+		$id_profesor = $this->Login_Register_Model->get_teacher_id($this->session->userdata('email'));
+		$data = array(
+			'id_docente' => $id_profesor->id
+		);
+
+        	$this->load->view('content/teacher/select_group_modify_group',$data);
+        	$id_grupo = $this->input->post('grupo_seleccionado');
+		$data_grupo = array(
+                      'id_grupo' => $id_grupo
+                      );
+		$this->load->view('content/teacher/modify_group',$data_grupo);
+		$this->load->view('main/teacher/footer');
+	}
+
+	function update_group(){
+		$this->load->model('Groups_Model');
+		$group_name = $this->input->post('name');
+		$group_id = $this->input->post('gid');
+		
+		$data = array(
+			'nombre' => $group_name
+		);
+		$this->Groups_Model->update_group($group_id, $data);
+
+		$cat_number = $this->input->post('cat_num');
+		for($i = 1; $i <= $cat_number; $i++){
+			$id_category = "id_cat_".$i;
+			$name_category = "name_cat_".$i;
+			$id = $this->input->post($id_category);
+			$data = array(
+				'nombre' => $this->input->post($name_category)
+			);
+			$this->Groups_Model->update_category($id,$data);
+		}
+
+		$this->show_group_modify_teacher();
+	}
+
+	// %%%%%%%%%%%%%%%%%%%%%%%%%% PROFILE %%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+	
+	function show_profile_teacher(){
+		$this->load->model('Login_Register_Model');
+		$res = $this->Login_Register_Model->get_teacher($this->session->userdata('email'));
+		$result = $res->row();
+		$data = array(
+			'id' => $result->id,
+			'nombre' => $result->nombre,
+			'apellidos' => $result->apellidos,
+			'email' => $result->email,
+			'centro' => $result->centro
+		);
+		$this->load->view('main/teacher/header');
+		$this->load->view('main/teacher/side_menu');
+		//$this->load->view('slave_menus/teacher/slave_menu_students');
+		$this->load->view('content/teacher/profile',$data);
 		$this->load->view('main/teacher/footer');
 	}
 	
@@ -479,6 +1037,36 @@ class Main extends CI_Controller
 			$data['flash_message'] = FALSE;
 		}
 		$this->index();
+	}
+	
+	function update_user(){
+		$this->load->model('Login_Register_Model');
+		$data = array(
+			'nombre' => $this->input->post('name'),
+			'apellidos' => $this->input->post('lastname'),
+			'email' => $this->input->post('email'),
+			'password' => password_hash($this->input->post('password'),PASSWORD_DEFAULT),
+			'centro' => $this->input->post('center')
+		);
+		if($this->Login_Register_Model->update_user($this->Login_Register_Model->get_teacher_id($this->session->userdata('email'))->id,$data)){
+			
+		}
+		$this->show_profile_teacher();
+	}
+
+	function update_admin(){
+		$this->load->model('Login_Register_Model');
+		$data = array(
+			'nombre' => $this->input->post('name'),
+			'apellidos' => $this->input->post('lastname'),
+			'email' => $this->input->post('email'),
+			'password' => password_hash($this->input->post('password'),PASSWORD_DEFAULT),
+			'centro' => $this->input->post('center')
+		);
+		if($this->Login_Register_Model->update_user($this->Login_Register_Model->get_teacher_id($this->session->userdata('email'))->id,$data)){
+			
+		}
+		$this->show_profile_admin();
 	}
 	
 	function logout_user(){

@@ -1,7 +1,7 @@
 <?php
 
-	$mysqli = mysqli_connect("localhost","root","","guessit");
-	$sql = "SELECT id, nombre FROM aula WHERE id_docente = '".$id_docente."'";
+	$mysqli = mysqli_connect("localhost","root","juanmo91","guessit");
+	$sql = "SELECT id, nombre FROM aula WHERE activa = 1 AND id_docente = '".$id_docente."'";
 	mysqli_query($mysqli,"SET NAMES 'utf8'");
 	$res = mysqli_query($mysqli, $sql);
 	
