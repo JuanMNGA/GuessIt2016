@@ -566,6 +566,7 @@ public class GameScreen implements Screen, Net.HttpResponseListener {
         parameters.put("categories",cadena_categorias.toString());
         parameters.put("level",String.valueOf(selectedLv));
         parameters.put("id_aula",String.valueOf(grupo.getId()));
+        parameters.put("id_usuario",String.valueOf(userInfo.getId()));
         parameters.put("test",String.valueOf(userInfo.getType()));
         String url = utilidades.getUrl()+"getDefinitions.php?";
         httpsolicitud = new Net.HttpRequest(httpMethod);

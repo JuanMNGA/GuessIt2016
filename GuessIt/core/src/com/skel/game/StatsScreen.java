@@ -254,7 +254,7 @@ public class StatsScreen implements Screen, Net.HttpResponseListener {
                 ImageTextButton backButton = new ImageTextButton(locale.back(), skin.get("back", ImageTextButton.ImageTextButtonStyle.class));
                 backButton.addListener(new ClickListener() {
                     public void clicked(InputEvent event, float x, float y) {
-                       g.setScreen(new MenuGameScreen(g, userInfo, grupo, skin));
+                       g.setScreen(new StatsMenuScreen(g, userInfo, grupo, skin));
                        dispose();
                    }
                 });

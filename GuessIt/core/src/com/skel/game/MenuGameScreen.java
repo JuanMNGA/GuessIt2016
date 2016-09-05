@@ -60,7 +60,7 @@ public class MenuGameScreen implements Screen {
 
         statsButton.addListener(new ClickListener() {
             public void clicked(InputEvent event, float x, float y) {
-                g.setScreen(new StatsScreen(g, userInfo, grupo, skin));
+                g.setScreen(new StatsMenuScreen(g, userInfo, grupo, skin));
                 dispose();
             }
         });

@@ -90,6 +90,13 @@ public class MainScreen implements Screen {
 			}
 		});
 
+		aboutButton.addListener(new ClickListener() {
+			public void clicked(InputEvent event, float x, float y) {
+				g.setScreen(new CreditsScreen(g, skin));
+				dispose();
+			}
+		});
+
 		// Anadir al stage
 		stage.addActor(aboutButton);
 		stage.addActor(newGameButton);
