@@ -496,8 +496,8 @@ class Main extends CI_Controller
 		$query = $this->input->post('pid');
 		$review = $this->input->post('correccion');
 		$this->load->model('Teacher_Model');
-		var_dump($query);
-		var_dump($review);
+		//var_dump($query);
+		//var_dump($review);
 		for($i = 0 ; $i < count($query) ; $i++ ){
 			$this->Teacher_Model->update_review($query[$i], $review[$i]);
 		}

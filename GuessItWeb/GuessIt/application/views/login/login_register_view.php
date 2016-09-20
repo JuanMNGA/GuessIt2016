@@ -43,7 +43,7 @@
       </div>
     </div>
 	<div class="form-group">
-      <label class="control-label col-sm-2" for="center">Center:</label>
+      <label class="control-label col-sm-2" for="center">Institution:</label>
       <div class="col-sm-10">
         <input type="text" class="form-control" name="center" placeholder="Enter studies center">
       </div>

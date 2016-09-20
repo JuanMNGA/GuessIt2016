@@ -45,6 +45,19 @@
 	$inicio_rango = $rango_ini;
 	$fin_rango = $rango_fin;
 	$nivel_sel = $nivel;
+	$sql_nivel = "";
+
+	$cadena_niveles = implode(";",$nivel_sel);
+	
+	$token = strtok($cadena_niveles,";");
+
+	$sql_nivel = " AND (definiciones.nivel = '".$token."'";
+
+	$token = strtok(";");
+	while($token !== false){
+		$sql_nivel .= " OR definiciones.nivel = '".$token."'";
+		$token = strtok(";");
+	}
 	
 	$dias_transcurridos = dias_transcurridos($inicio_rango, $fin_rango);
 	
@@ -107,22 +120,22 @@
 		for( $j = 0 ; $j < count($array_fechas) ; $j++ ){
 			switch($informe_sel){
 				case 1:
-					$consulta_valor = "SELECT count(puntuaciones.id) AS cantidad FROM puntuaciones, definiciones WHERE puntuaciones.id_palabra = definiciones.id AND definiciones.nivel = ".$nivel_sel." AND definiciones.id_aula = ".$grupo_id." AND puntuaciones.id_usuario = ".$id_alumnos[$i]." AND puntuaciones.fecha = '".$array_fechas[$j]."'";
+					$consulta_valor = "SELECT count(puntuaciones.id) AS cantidad FROM puntuaciones, definiciones WHERE puntuaciones.id_palabra = definiciones.id ".$sql_nivel.") AND definiciones.id_aula = ".$grupo_id." AND puntuaciones.id_usuario = ".$id_alumnos[$i]." AND puntuaciones.fecha = '".$array_fechas[$j]."'";
 				break;
 				case 2:
-					$consulta_valor = "SELECT count(puntuaciones.id) AS cantidad FROM puntuaciones, definiciones WHERE puntuaciones.id_palabra = definiciones.id AND definiciones.nivel = ".$nivel_sel." AND definiciones.id_aula = ".$grupo_id." AND puntuaciones.id_usuario = ".$id_alumnos[$i]." AND puntuaciones.fecha = '".$array_fechas[$j]."' AND puntuaciones.acierto = 1";
+					$consulta_valor = "SELECT count(puntuaciones.id) AS cantidad FROM puntuaciones, definiciones WHERE puntuaciones.id_palabra = definiciones.id ".$sql_nivel.") AND definiciones.id_aula = ".$grupo_id." AND puntuaciones.id_usuario = ".$id_alumnos[$i]." AND puntuaciones.fecha = '".$array_fechas[$j]."' AND puntuaciones.acierto = 1";
 				break;
 				case 3:
-					
+					$consulta_valor = "SELECT count(puntuaciones.id) AS cantidad FROM puntuaciones, definiciones WHERE puntuaciones.id_palabra = definiciones.id ".$sql_nivel.") AND definiciones.id_aula = ".$grupo_id." AND puntuaciones.id_usuario = ".$id_alumnos[$i]." AND puntuaciones.fecha = '".$array_fechas[$j]."' AND puntuaciones.motivo != '' AND puntuaciones.motivo = puntuaciones.revision";
 				break;
 				case 4:
-					$consulta_valor = "SELECT count(definiciones.id) AS cantidad FROM definiciones WHERE definiciones.nivel = ".$nivel_sel." AND definiciones.id_aula = ".$grupo_id." AND definiciones.id_usuario = ".$id_alumnos[$i]." AND definiciones.fecha = '".$array_fechas[$j]."'";
+					$consulta_valor = "SELECT count(definiciones.id) AS cantidad FROM definiciones WHERE definiciones.id_aula = ".$grupo_id.$sql_nivel.") AND definiciones.id_usuario = ".$id_alumnos[$i]." AND definiciones.fecha = '".$array_fechas[$j]."'";
 				break;
 				case 5:
-					$consulta_valor = "SELECT count(definiciones.id) AS cantidad FROM definiciones, puntuaciones WHERE definiciones.id = puntuaciones.id_palabra AND definiciones.nivel = ".$nivel_sel." AND definiciones.id_aula = ".$grupo_id." AND definiciones.id_usuario = ".$id_alumnos[$i]." AND definiciones.fecha = '".$array_fechas[$j]."'";
+					$consulta_valor = "SELECT count(definiciones.id) AS cantidad FROM definiciones, puntuaciones WHERE definiciones.id = puntuaciones.id_palabra ".$sql_nivel.") AND definiciones.id_aula = ".$grupo_id." AND definiciones.id_usuario = ".$id_alumnos[$i]." AND definiciones.fecha = '".$array_fechas[$j]."'";
 				break;
 				case 6:
-					$consulta_valor = "SELECT count(definiciones.id) AS cantidad FROM definiciones, puntuaciones WHERE definiciones.id = puntuaciones.id_palabra AND definiciones.nivel = ".$nivel_sel." AND definiciones.id_aula = ".$grupo_id." AND definiciones.id_usuario = ".$id_alumnos[$i]." AND definiciones.fecha = '".$array_fechas[$j]."' AND puntuaciones.acierto = 1";
+					$consulta_valor = "SELECT count(definiciones.id) AS cantidad FROM definiciones, puntuaciones WHERE definiciones.id = puntuaciones.id_palabra ".$sql_nivel.") AND definiciones.id_aula = ".$grupo_id." AND definiciones.id_usuario = ".$id_alumnos[$i]." AND definiciones.fecha = '".$array_fechas[$j]."' AND puntuaciones.acierto = 1";
 				break;
 				case 7:
 				break;
@@ -142,7 +155,10 @@
 					}
 				break;
 				case 3:
-					
+					while( $row_consulta_valor = mysqli_fetch_assoc($res_consulta_valor)){
+						$cadena_datasets .= $row_consulta_valor['cantidad'].",";
+						$array_datos[] = $row_consulta_valor['cantidad'];
+					}
 				break;
 				case 4:
 					while( $row_consulta_valor = mysqli_fetch_assoc($res_consulta_valor)){
@@ -211,7 +227,7 @@
 	// Aqui el script chartjs
 	if($tipo_respuesta == 'grafico'){
 
-	echo '<div class="col-md-9"> <canvas id="myChart" width="1200" height="550"></canvas>';
+	echo '<div class="col-md-9"> <canvas id="myChart" width="1200" height="550"></canvas> <div id="leyendaBarras" class="col-md-9"> </div>';
 	echo '<script>';
 	
 	echo 'var ctx = document.getElementById("myChart").getContext("2d");';
@@ -278,6 +294,7 @@
 	';
 	
 	echo 'var myLineChart = new Chart(ctx).Line(data, options);';
+	echo 'legend(document.getElementById("leyendaBarras"), data);';
 	
 	echo '</script> </div>';
 	}else{

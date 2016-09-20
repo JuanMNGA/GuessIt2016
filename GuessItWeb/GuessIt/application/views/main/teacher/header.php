@@ -9,6 +9,7 @@
 		<link href="<?php echo base_url('css/bootstrap.min.css')?>" rel="stylesheet">
 		<link href="<?php echo base_url('js/bootstrap.js')?>" rel="stylesheet">
 		<script src="<?php echo base_url('js/Chart.js')?>"></script>
+		<script src="<?php echo base_url('js/legend.js')?>"></script>
 		<!--[if lt IE 9]>
 			<script src="//html5shim.googlecode.com/svn/trunk/html5.js"></script>
 		<![endif]-->

@@ -83,7 +83,7 @@
 			<div class="panel panel-default">
 				<div class="panel-heading"> Niveles </div>
 				<div class="panel-body">
-					<select name="nivel_seleccionado">
+					<select multiple name="nivel_seleccionado[]">
 						<option value="1"> Nivel 1 </option>
 						<option value="2"> Nivel 2 </option>
 						<option value="3"> Nivel 3 </option>
