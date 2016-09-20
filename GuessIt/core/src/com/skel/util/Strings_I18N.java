@@ -34,8 +34,8 @@ public class Strings_I18N {
                 if(language.equals("Spanish")){
                     preguntas.add(spaces + "¿El verbo está bien conjugado?");
                     preguntas.add(spaces + "¿Los signos de puntuación están bien?");
-                    preguntas.add(spaces + "Pregunta 3");
-                    preguntas.add(spaces + "Pregunta 4");
+                    preguntas.add(spaces + "¿Las preposiciones son correctas?");
+                    preguntas.add(spaces + "¿Se encuentra el verbo en el tiempo correcto?");
                 }
             }
         }
